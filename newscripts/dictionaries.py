@@ -1,39 +1,39 @@
 SIZE_DICT = {
-    1: 0x4, # INT
-    2: 0x4, # unsigned int
-    3: 0x4, # FLOAT
-    4: 0x1, # BOOL
-    5: 0xC, # its Vec3
-    6: 0x8, # offset, uses 8 bytes?
-    7: 0x40, # m256, using float
-    8: 0x2, # STRING, SHOWS, HOW MANY STRING IT HAVE
-    9: 0x8, # uint64
-    10: 0x10, # m128, maybe array of 4 int
-    11: 0x2, # substring in string table
-    30: 0x4, # idk
-    40: 0x2, # its object, i think, maybe it shows size of object or somehting? Pointer (Unscoped) to type -> %s
-    50: 0x8, # long again, %u,%u format
-    60: 0x0, # container of element
-    70: 0x4 # ARRAY?? null value in end
+    1: 0x4, 
+    2: 0x4, 
+    3: 0x4,
+    4: 0x1, 
+    5: 0xC, 
+    6: 0x8, 
+    7: 0x40, 
+    8: 0x2, 
+    9: 0x8, 
+    10: 0x10, 
+    11: 0x2,
+    30: 0x4, 
+    40: 0x2, 
+    50: 0x8, 
+    60: 0x0, 
+    70: 0x4 
 }
 
 TYPE_DICT = {
     1: 'int32',
-    2: 'uint32', # unsigned int
+    2: 'uint32', 
     3: 'float', 
     4: 'bool', 
-    5: 'Vec3', # uknown type, but object include 'Offset'? Vec3.
-    6: 'Vec2', # uknown 8-byte type, but object include 'Offset', Vec2.
-    7: 'Mat4', # uses 4*4 _m128, every float. In main name="Transform"
-    8: 'AString', # string 
+    5: 'Vec3', 
+    6: 'Vec2', 
+    7: 'Mat4',
+    8: 'AString', 
     9: 'uint64',
     10: 'Vec4',
-    11: 'UString', #substring
-    30: 'PolyPtr', # includes 4 bytes, if it isnt zero, then its object
-    40: 'Link', # unknown type, maybe its string? its FFFF or 02/03/05 etc... 2 bytes, WeakRef<ExposedObject>
-    50: 'Bitfield', # idk, maybe its long (exactly not uses float point)
-    60: 'Array', # creates array of next element, uses predestined size
-    70: 'Structure' # with many types
+    11: 'UString', 
+    30: 'PolyPtr', 
+    40: 'Link', # weak referenced value, Link * 8 + 4 + Weak ref ptr. WeakRef<ExposedObject>. Pointer (Unscoped) to type -> %s
+    50: 'Bitfield', # %u,%u format
+    60: 'Array', 
+    70: 'Structure'
 }
 
 IS_SIZE_PTR_DICT = {
@@ -55,7 +55,7 @@ IS_SIZE_PTR_DICT = {
     70: 0
 }
 
-BASE_TYPE_DICT = {
+BASE_TYPE_DICT = { # used as baseType tag for objects
     0x1: 'Object',
     0x2: 'Structure',
     0x4: 'Collection',
@@ -63,7 +63,7 @@ BASE_TYPE_DICT = {
     0x10: 'PolymorphicStructure'
 }
 
-OBJECT_TYPES_DICTIONARY = { # i think the values is hashed
+OBJECT_TYPES_DICTIONARY = { # I think the values is hashed in 4 bytes
     b'\xB6\x64\xC1\x76': "ExposedCollection",
 
     # FOR CASE ACTOR
