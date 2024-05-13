@@ -1,5 +1,4 @@
-# LANoireTools
-## Main
+# Main
 These tools were created to modify L.A.Noire. Currently, they can only get information (unpacking), but in the future I will try to pack the files to big.pc (.ps3, .360).
 
 The tools for "oldscripts" were created by other people, I only found them in the archives of the Internet. But I can't say for sure who created them.
@@ -25,3 +24,4 @@ atb_to_xml.py - unpacks .atb into an .xml file. It was created at the request of
 dictionaries.py - additional file for atb_to_xml, includes the types and sizes of variables behind the byte, as well as the types of objects behind the signature.
 
 ## How to use
+atb_to_xml - expects a string with the file name. If the file was not specified as an argument, then it should be entered manually after startup. If the file is not found, the program raises an exception.
