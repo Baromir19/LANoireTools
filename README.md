@@ -2,7 +2,7 @@
 These tools were created to modify L.A.Noire. Currently, they can only get information (unpacking), but in the future I will try to pack the files to big.pc (.ps3, .360).
 
 The tools for "oldscripts" were created by other people, I only found them in the archives of the Internet:
-* `010 Tools` was created by
+* `010 Tools` was created by Kramla
 * `Python2 .big unpacker` was created by
 * `BMS .big unpacker` was created by
 * `010 Tools` for Nintendo Switch ver. can be found here [here](https://github.com/masagrator/LANoireNX)
