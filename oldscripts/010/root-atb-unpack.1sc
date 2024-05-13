@@ -1,0 +1,99 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint subtitleidentifikator;
+uint velikost;
+uint pozice;
+uint pozice2;
+uint file1;
+uint file2;
+ubyte bufer[10000000];
+int i;
+int j;
+int k; 
+uint enter;
+uint pocet;
+uint ppppp;
+string prazdny="prazdnynazev";
+enter=2573;
+file1=GetFileNum();
+DisableUndo();
+FileNew();
+DisableUndo();
+file2=GetFileNum();
+FileSelect(file1);
+subtitleidentifikator=476545086;
+pozice2=0;
+TFindResults kom = FindAll(subtitleidentifikator,true,false,false,0.0,1,0,0);
+for(i=0;i<kom.count;i++) {
+    pozice=kom.start[i]+4;
+    velikost=ReadUByte(pozice);
+    pozice=pozice+1;
+    ReadBytes(bufer,pozice,velikost);
+    pozice=pozice+velikost+6;
+    FileSelect(file2);
+    WriteString(pozice2,"hlavninazev=");
+    pozice2=pozice2+12;
+    WriteBytes(bufer,pozice2,velikost);
+    pozice2=pozice2+velikost;
+    WriteUShort(pozice2,enter);
+    pozice2=pozice2+2;
+    FileSelect(file1);
+    pocet=ReadUShort(pozice);
+    pozice=pozice+2;
+    for(j=0;j<pocet;j++) {
+        pozice=pozice+9;       
+        velikost=ReadUShort(pozice);
+        pozice=pozice+2;  
+        ReadBytes(bufer,pozice,velikost);
+        pozice=pozice+velikost;     
+        FileSelect(file2);
+        WriteString(pozice2,"subnazev=");
+        pozice2=pozice2+9;
+        WriteBytes(bufer,pozice2,velikost);
+        pozice2=pozice2+velikost;
+        WriteUShort(pozice2,enter);
+        pozice2=pozice2+2;
+        FileSelect(file1);
+        ppppp=6;
+        if(i==0 ) ppppp=7; 
+        if(i==1 ) ppppp=7;
+        for(k=0;k<ppppp;k++) {  
+            pozice=pozice+5;
+            velikost=ReadUShort(pozice);
+            pozice=pozice+2;  
+            if(velikost>0) {
+                ReadBytes(bufer,pozice,velikost);
+                pozice=pozice+velikost;     
+                if(k==0) {
+                FileSelect(file2);
+                WriteBytes(bufer,pozice2,velikost);
+                pozice2=pozice2+velikost;
+                WriteUShort(pozice2,enter);
+                pozice2=pozice2+2;
+                FileSelect(file1);
+                }
+            } else {
+                if(k==0) {
+                FileSelect(file2);
+                WriteString(pozice2,prazdny);
+                pozice2=pozice2+Strlen(prazdny);
+                WriteUShort(pozice2,enter);
+                pozice2=pozice2+2;
+                FileSelect(file1);            
+                }
+            }
+        } 
+        pozice=pozice+1;
+    }
+    FileSelect(file2);
+    WriteUShort(pozice2,enter);
+    pozice2=pozice2+2;    
+    FileSelect(file1);
+}

@@ -1,0 +1,161 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint segs=1936025459;
+uint file1;
+uint file2;
+uint file3;
+string cislo;
+string cislo2;
+string cesta;
+uint pocet;
+uint zaloha;
+uint velikostsouboru;
+uint velikostzmen;
+uint pocetsegmentu;
+uint pomocny;
+uint pomocny2;
+uint pomocny3;
+uint i;
+uint j;
+ubyte buffer[1000000];
+string volani;
+uint pozice;
+
+cesta="C:\\LANOIRE\\";
+FileNew();
+file3=GetFileNum();
+pozice=0;
+FileOpen(cesta+"cases.big.pc");
+DeleteBytes(0,FileSize()-ReadUInt(FileSize()-4));
+file1=GetFileNum();
+pocet=ReadUInt(4);
+
+for(i=0;i<pocet;i++) {
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"cases\\cases"+cislo+"_0_dat");
+    file2=GetFileNum();
+    velikostsouboru=FileSize();
+    pocetsegmentu=velikostsouboru/131072;
+    if(velikostsouboru%131072!=0) {
+        pocetsegmentu=pocetsegmentu+1;
+    }
+    FileSelect(file3);
+    zaloha=pozice+12;
+    WriteUInt(pozice,segs);
+    WriteUShort(pozice+4,7);
+    WriteUShort(pozice+6,pocetsegmentu);
+    WriteUInt(pozice+8,0);
+    InsertBytes(pozice+12,pocetsegmentu*4);
+    if((12+pocetsegmentu*4)%16!=0) {
+        pomocny=(12+pocetsegmentu*4)/16;
+        pomocny=16*(pomocny+1);
+        InsertBytes(pozice+12+pocetsegmentu*4,pomocny-(12+pocetsegmentu*4));
+        pozice=pozice+pomocny;
+    } else {
+        pozice=pozice+(12+pocetsegmentu*4);
+        
+    }
+    FileSelect(file2);
+    for(j=0;j<pocetsegmentu;j++) {
+        SPrintf(cislo2,"%i",j);
+        if(j!=pocetsegmentu-1) {
+            ReadBytes(buffer,j*131072,131072);
+            FileNew();
+            WriteBytes(buffer,0,131072);
+            FileSave(cesta+"bms\\cases"+cislo+"_"+cislo2+"_dat");
+            FileClose();
+        
+            FileNew();
+            volani="CD "+cesta+"bms\\ \n quickbms.exe deflate_compress.bms cases"+cislo+"_"+cislo2+"_dat "+cesta+"bms\\ \n EXIT";
+            WriteString(0,volani);
+            FileSave(cesta+"bms\\bat2.bat");
+            FileClose();
+            Exec(cesta+"bms\\bat2.bat"," ",true);
+    
+            FileOpen(cesta+"bms\\cases"+cislo+"_"+cislo2+"_dat.zip");
+            velikostzmen=FileSize();
+            if(velikostzmen%16!=0) {
+                pomocny=velikostzmen/16;
+                pomocny=16*(pomocny+1);
+                InsertBytes(velikostzmen,pomocny-velikostzmen);
+                velikostzmen=FileSize();
+            } 
+            ReadBytes(buffer,0,velikostzmen);
+            FileClose();
+            FileSelect(file3);
+            WriteBytes(buffer,pozice,velikostzmen);
+            pozice=pozice+velikostzmen;
+            
+            pomocny3=velikostzmen/65536;
+            WriteUShort(zaloha+j*4,velikostzmen-pomocny3*65536);
+            WriteUByte(zaloha+j*4+2,16);
+            WriteUByte(zaloha+j*4+3,pomocny3);
+            FileSelect(file2);
+        } else {
+            pomocny2=FileSize()-j*131072;
+            ReadBytes(buffer,j*131072,pomocny2);
+            FileNew();
+            WriteBytes(buffer,0,pomocny2);
+            FileSave(cesta+"bms\\cases"+cislo+"_"+cislo2+"_dat");
+            FileClose();
+        
+            FileNew();
+            volani="CD "+cesta+"bms\\ \n quickbms.exe deflate_compress.bms cases"+cislo+"_"+cislo2+"_dat "+cesta+"bms\\ \n EXIT";
+            WriteString(0,volani);
+            FileSave(cesta+"bms\\bat2.bat");
+            FileClose();
+            Exec(cesta+"bms\\bat2.bat"," ",true);
+    
+            FileOpen(cesta+"bms\\cases"+cislo+"_"+cislo2+"_dat.zip");
+            velikostzmen=FileSize();
+            if(velikostzmen%16!=0) {
+                pomocny=velikostzmen/16;
+                pomocny=16*(pomocny+1);
+                InsertBytes(velikostzmen,pomocny-velikostzmen);
+                velikostzmen=FileSize();
+            } 
+            ReadBytes(buffer,0,velikostzmen);
+            FileClose();
+            FileSelect(file3);
+            WriteBytes(buffer,pozice,velikostzmen);
+            pozice=pozice+velikostzmen;
+            
+            pomocny3=velikostzmen/65536;
+            WriteUShort(zaloha+j*4,velikostzmen-pomocny3*65536);
+            WriteUByte(zaloha+j*4+2,16);
+            WriteUByte(zaloha+j*4+3,pomocny3);
+            FileSelect(file2);
+        }
+    
+    }
+    DeleteFile(cesta+"bms\\bat2.bat");
+    for(j=0;j<pocetsegmentu;j++) {
+    SPrintf(cislo2,"%i",j);
+    DeleteFile(cesta+"bms\\cases"+cislo+"_"+cislo2+"_dat");
+    DeleteFile(cesta+"bms\\cases"+cislo+"_"+cislo2+"_dat.zip");
+    
+    }
+    FileSelect(file1);
+    WriteUInt(8+i*20+4,(zaloha-12)/16);
+    WriteUInt(8+i*20+8,velikostsouboru);
+    WriteUInt(8+i*20+16,pozice-zaloha+12);
+    FileSelect(file2);
+    FileClose();
+}
+FileSelect(file3);
+velikostsouboru=FileSize();
+ubyte bufac[velikostsouboru];
+ReadBytes(bufac,0,velikostsouboru);
+FileClose();
+FileSelect(file1);
+InsertBytes(0,velikostsouboru);
+WriteBytes(bufac,0,velikostsouboru);
+FileSave(GetFileName());
+FileClose();

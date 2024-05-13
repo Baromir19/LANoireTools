@@ -1,0 +1,112 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+local int kdezeto;
+local uint i;
+local uint svelikost;
+local uint pozice;
+local uint zaloha;
+local uint suma;
+local uint pomocny;
+local uint nezabaleno;
+local uint zazabaleno;
+local uint zvuk;
+local uint neznamo;
+local uint neznamo2;
+local uint segs;
+local uint suma2;
+local uint video;
+local uint dagd;
+dagd=0;
+video=0;
+segs=0;
+zvuk=0;
+neznamo=0;
+neznamo2=0;
+nezabaleno=0;
+zazabaleno=0;
+LittleEndian();
+suma=0;
+suma2=0;
+kdezeto=FileSize()-ReadUInt(FileSize()-4);
+FSeek(kdezeto);
+struct header {
+uint three;
+uint numberoffiles;
+BigEndian();
+struct files {
+for(i=0;i<numberoffiles;i++) {
+struct file {
+uint ID;
+uint offset; // * 16, pokud nekomprimovano blok o velikosti 128
+uint uncompressedsizeorheadersize; // 160=LZX streamed
+uint uncompressed; // 0 pro LZX nestreamed
+uint compressed;
+if(uncompressed==0) {
+    suma2=suma2+uncompressedsizeorheadersize;
+} else if(uncompressedsizeorheadersize==160) {
+    suma2=suma2+uncompressed;
+} else {
+    suma2=suma2+uncompressed+uncompressedsizeorheadersize;
+}
+if(compressed==0) {
+    zaloha=FTell();
+    FSeek(offset*16);
+    byte data[uncompressedsizeorheadersize];
+    FSeek(zaloha);
+    if(ReadUInt(offset*16)==1380533830) {
+        // (RIFF) WAV, XWMA
+        zvuk=zvuk+1;
+    } else if(ReadUInt(offset*16)==1179861556) {
+        // (FSB4) WAV, MP3
+        zvuk=zvuk+1;
+    } else if(ReadUShort(offset*16)>65520) {
+        // WAV
+        zvuk=zvuk+1;
+    } else if(ReadUInt(offset*16)==1332176723) {
+        // Ogg
+        video=video+1;
+    } else if(ReadUInt(offset*16)==1112099689) {
+        // BIK
+        video=video+1;
+    } else if(ReadUInt(offset*16)==1145128772) {
+        // DAGD
+        dagd=dagd+1;
+    } else {
+        neznamo=neznamo+1;
+    }
+    suma=suma+uncompressedsizeorheadersize;
+    nezabaleno=nezabaleno+1;
+} else {
+    zaloha=FTell();
+    FSeek(offset*16);
+    byte data[compressed];
+    FSeek(zaloha);
+    if(ReadUInt(offset*16)==1936025459) {
+        segs=segs+1;
+    } else {
+        neznamo2=neznamo2+1;
+    }
+    suma=suma+compressed;
+    zazabaleno=zazabaleno+1;
+}
+
+
+} record;
+}
+} record;
+LittleEndian();
+Printf("Pocetsouboru = %u \n",numberoffiles);
+uint sizeofmainheader;
+} record;
+
+Printf("Realna suma dat = %u \n",kdezeto);
+Printf("Kontrolni suma dat = %u \n",suma);
+Printf("Rozbalena velikost dat = %u \n",suma2);
+Printf("Nekomprimovane soubory = %u ( Sounds = %u , Video = %u, DAGD = %u, Unknown = %u ) \n",nezabaleno,zvuk,video,dagd,neznamo);
+Printf("Komprimovane soubory = %u ( Segments = %u , Unknown = %u ) \n",zazabaleno,segs,neznamo2);

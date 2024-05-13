@@ -1,0 +1,48 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+local uint i;
+local uint j;
+local uint k;
+local uint l;
+local uint subtitleidentifikator;
+subtitleidentifikator=476545086;
+//uint delic;
+//ubyte velikostnazev;
+//char nazev[velikostnazev+1];
+//ushort subpocet;
+local TFindResults kom = FindAll(subtitleidentifikator,true,false,false,0.0,1,0,0);
+for(k=0;k<kom.count;k++) {
+    struct subtitles { 
+        FSeek(kom.start[k]);
+        uint delicik;
+        ubyte velikostnazev2;
+        char nazev2[velikostnazev2];
+        ubyte cosi2[6];
+        ushort pocet;
+        for(j=0;j<pocet;j++) {
+            struct texty {
+                ubyte cosi[9];
+                ushort velikostnazev3;
+                char nazev3[velikostnazev3];
+                l=6;
+                if(k==1 & j==558) l=7; 
+                for(i=0;i<l;i++) {
+                    struct vnitrnitexty {
+                        ubyte cosi[5];
+                        ushort velikosttext4;
+                        if(velikosttext4==0) Printf("Problem %u - %u - %u \n",k,j,i); 
+                        char text4[velikosttext4];
+                    } record;
+                }
+                ubyte pocet;
+            } record;
+        }
+    } record;
+}

@@ -1,0 +1,68 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint pocetsouboru;
+uint pozice;
+uint velikost;
+uint pozicejmen;
+uint poz;
+int i;
+uint file1;
+string cesta;
+
+cesta="C:\\LANOIRE\\";
+
+FileOpen(cesta+"out.wad.pc");
+DisableUndo();
+file1=GetFileNum();
+pocetsouboru=ReadUInt(4);
+pozicejmen=ReadUInt(4+8+12*(pocetsouboru-1))+ReadUInt(8+8+12*(pocetsouboru-1));
+poz=pozicejmen;
+
+
+for(i=0;i<pocetsouboru;i++) {
+    pozice=ReadUInt(4+8+12*i);
+    velikost=ReadUInt(8+8+12*i);
+    poz=Kopirovac(file1, poz, cesta, velikost, pozice, i);
+}
+FileSave(GetFileName());
+FileClose();
+
+uint Kopirovac(uint file1, uint poz, string cesta, uint velikost, uint pozice, uint cislo)
+{
+    uint velikoststringu;
+    uint velikostzmen;
+    int rozdil;
+    uint k;
+    FileSelect(file1);
+    velikoststringu=ReadUShort(poz);
+    uchar jmeno[velikoststringu];
+    poz=poz+2;
+    ReadBytes(jmeno,poz,velikoststringu);
+    poz=poz+velikoststringu;
+    DeleteBytes(pozice,velikost);
+
+    FileOpen(cesta+jmeno);
+    velikostzmen=FileSize();
+    ubyte buffer[velikostzmen];
+    ReadBytes(buffer,0,velikostzmen);
+    FileClose();
+    FileSelect(file1);
+    InsertBytes(pozice,velikostzmen);
+    WriteBytes(buffer,pozice,velikostzmen);
+    rozdil=velikostzmen-velikost;
+    WriteUInt(8+cislo*12+8,velikostzmen);
+    if(rozdil!=0) {
+        poz=poz+rozdil;
+        for(k=0;k<pocetsouboru;k++) {
+            if(ReadUInt(8+k*12+4)>pozice) WriteUInt(8+k*12+4,ReadUInt(8+k*12+4)+rozdil);
+        }
+    }
+    return poz;
+}

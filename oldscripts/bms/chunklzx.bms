@@ -1,0 +1,61 @@
+# chunklzx (script 0.2)
+# script for QuickBMS http://quickbms.aluigi.org
+
+get NAME basename
+get EXT extension
+string NAME += "_unpacked."
+string NAME += EXT
+
+comtype xmemdecompress
+endian big
+    idstring "chunklzx"
+    get DUMMY long
+    if DUMMY <= 2
+        get FULLSIZE long
+        set TYPE long 0     # Fight Night Champion and some FIFA11
+    else
+        math FULLSIZE = DUMMY
+        set TYPE long 1     # most FIFA11 files
+    endif
+    get SIZE long
+    if TYPE == 0
+        get CHUNKS long
+        get DUMMY long
+        get DUMMY long
+        get DUMMY long
+        get DUMMY long
+    else
+        math CHUNKS = FULLSIZE
+        math CHUNKS /= SIZE
+        if FULLSIZE % SIZE
+            math CHUNK += 1
+        endif
+    endif
+    log MEMORY_FILE 0 0
+    append
+    savepos OFFSET
+    do
+        if TYPE == 0
+            math OFFSET x= 0x8
+            for # very lame, made on the fly
+                math T = OFFSET
+                math T %= 0x10
+                if T == 8
+                    break
+                endif
+                math OFFSET += 8
+            next
+        endif
+        goto OFFSET
+
+        get ZSIZE long
+        if TYPE == 0
+            get DUMMY long
+        endif
+        savepos OFFSET
+        clog MEMORY_FILE OFFSET ZSIZE SIZE
+        math OFFSET += ZSIZE
+        get MYSIZE asize MEMORY_FILE
+    while MYSIZE < FULLSIZE
+    append
+    log NAME 0 FULLSIZE MEMORY_FILE

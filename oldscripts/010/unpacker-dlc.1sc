@@ -1,0 +1,146 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint i;
+uint velikost;
+uint pozice;
+uint hlpozice;
+uint zaloha;
+ushort pocet;
+ubyte cislo;
+uint file1;
+string cesta;
+uint j;
+uint vypocet;
+uint popocet;
+file1=GetFileNum();
+uint komprese;
+uint porozbaleni;
+string jednicka;
+string dvojka;
+cesta="C:\\LANOIRE\\bms";
+LittleEndian();
+hlpozice=FileSize()-ReadUInt(FileSize()-4);
+popocet=ReadUInt(hlpozice+4);
+hlpozice=hlpozice+8;
+LittleEndian();
+for(j=0;j<popocet;j++) {
+pozice=ReadUInt(hlpozice+4+j*20)*16;
+porozbaleni=ReadUInt(hlpozice+8+j*20);
+if(ReadUInt(pozice)==1936025459) {
+    pocet=ReadUShort(pozice+6);
+    zaloha=pozice+12;
+    if((12+pocet*4)%16!=0) {
+        vypocet=(12+pocet*4)/16;
+        vypocet=(vypocet+1)*16;
+    } else {
+        vypocet=(12+pocet*4);
+    }
+    pozice=pozice+vypocet;
+    for(i=0;i<pocet;i++) {
+        velikost=ReadUShort(zaloha);
+        komprese=ReadUByte(zaloha+2);
+        cislo=ReadUByte(zaloha+3);
+        zaloha=zaloha+4;
+        velikost=velikost+65536*cislo;
+        Kopirovac(file1,pozice,cesta,velikost,j,i,komprese);
+        pozice=pozice+velikost;
+    }
+    if(pocet>1) {
+        Kopirovac2(file1,cesta,pocet,j);
+    }
+
+    SPrintf(jednicka,"%i",j);
+    SPrintf(dvojka,"%i",0);
+    FileOpen(cesta+"\\cases"+jednicka+"_"+dvojka+"_dat");
+    // DeleteBytes(0,112);
+    if(FileSize()!=porozbaleni) Printf("Problem s velikosti! %i \n",j);
+    // FileSave(GetFileName()+".dds");
+    FileClose();
+
+    FileSelect(file1);
+    for(i=0;i<pocet;i++) {
+        Deleter(file1,cesta,i,j);
+    }
+    DeleteFile(cesta+"\\bat.bat");
+} else {
+    Printf("Neni komprimovano: %i \n",j);
+
+}
+
+} 
+
+
+void Kopirovac(uint file1, uint pozice, string cesta, uint velikost, uint j, uint i, uint komprese)
+{
+    ubyte buffer[velikost];
+    string volani;
+    string a;
+    string b;
+    SPrintf(a,"%i",i);
+    SPrintf(b,"%i",j);
+    FileSelect(file1);
+    ReadBytes(buffer,pozice,velikost);
+    FileNew();
+    WriteBytes(buffer,0,velikost);
+    FileSave(cesta+"\\cases"+b+"_"+a+"_dat.zip");
+    FileClose();
+    if(komprese>1) {
+        FileNew();
+        volani="CD "+cesta+"\\ \n quickbms.exe deflate.bms cases"+b+"_"+a+"_dat.zip "+cesta+"\\ \n EXIT";
+        WriteString(0,volani);
+        FileSave(cesta+"\\bat.bat");
+        FileClose();
+        Exec(cesta+"\\bat.bat"," ",true);
+    } else {
+        FileNew();
+        WriteBytes(buffer,0,velikost);
+        FileSave(cesta+"\\cases"+b+"_"+a+"_dat");
+        FileClose();
+    }
+    FileSelect(file1);
+}
+void Kopirovac2(uint file1, string cesta, uint pocet, uint j)
+{
+    ubyte buffer[10000000];
+    uint velikost;
+    uint poposka;
+    string a;
+    string b;
+    uint k;
+    uint file3;
+    SPrintf(b,"%i",j);
+    SPrintf(a,"%i",0);
+    FileOpen(cesta+"\\cases"+b+"_"+a+"_dat");
+    file3=GetFileNum();
+    poposka=FileSize();
+    for(k=1;k<pocet;k++) {
+        SPrintf(a,"%i",k);
+        FileOpen(cesta+"\\cases"+b+"_"+a+"_dat");
+        velikost=FileSize();
+        ReadBytes(buffer,0,velikost);  
+        FileClose();  
+        FileSelect(file3);
+        WriteBytes(buffer,poposka,velikost);
+        poposka=poposka+velikost;
+        DeleteFile(cesta+"\\cases"+b+"_"+a+"_dat");
+    }   
+    FileSelect(file3); 
+    FileSave(GetFileName());
+    FileClose();
+    FileSelect(file1);
+}
+void Deleter(uint file1, string cesta, uint i, uint j) {
+    string a;
+    string b;
+    SPrintf(b,"%i",j);
+    SPrintf(a,"%i",i);
+    DeleteFile(cesta+"\\cases"+b+"_"+a+"_dat.zip");
+    FileSelect(file1);
+}

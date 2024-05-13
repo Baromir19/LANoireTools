@@ -1,0 +1,226 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint segs=1936025459;
+uint file1;
+uint file2;
+uint file3;
+string cislo;
+string cislo2;
+string cesta;
+uint pocet;
+uint zaloha;
+uint velikostsouboru;
+uint velikostsouboru2;
+uint velikostzmen;
+uint pocetsegmentu;
+uint pomocny;
+uint pomocny2;
+uint pomocny3;
+uint i;
+uint j;
+uint k;
+ubyte buffer[1000000];
+string volani;
+uint pozice;
+uint zakladnipozice;
+int rozdil;
+uint puvpoloha;
+uint puvvelikost;
+
+cesta="C:\\LANOIRE\\";
+
+
+for(k=0;k<8;k++) {
+    FileNew();
+    file3=GetFileNum();
+    pozice=0;
+    if(k==0) {
+        FileOpen(cesta+"dlc.dlc1.big.pc");
+    } else if(k==1) {
+        FileOpen(cesta+"dlc.dlc2.big.pc");
+    } else if(k==2) {
+        FileOpen(cesta+"dlc.dlc3.big.pc");
+    } else if(k==3) {
+        FileOpen(cesta+"dlc.dlc4.big.pc");
+    } else if(k==4) {
+        FileOpen(cesta+"dlc.dlc5.big.pc");
+    } else if(k==5) {
+        FileOpen(cesta+"dlc.dlc6.big.pc");
+    } else if(k==6) {
+        FileOpen(cesta+"dlc.dlc8.big.pc");
+    } else if(k==7) {
+        FileOpen(cesta+"dlc.dlc9.big.pc");
+    }
+    file1=GetFileNum();
+    zakladnipozice=FileSize()-ReadUInt(FileSize()-4);
+    pocet=ReadUInt(zakladnipozice+4);
+    if(k==0) {
+    i=1150;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"cases\\cases67_0_dat");
+    } else if(k==1) {
+    i=1204;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"cases\\cases19_0_dat");
+    } else if(k==2) {
+    i=2114;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"cases\\cases30_0_dat");
+    } else if(k==3) {
+    i=1380;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"cases\\cases1_0_dat");
+    } else if(k==4) {
+    i=2;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"dlc5\\dlc2_0_dat");
+    } else if(k==5) {
+    i=2;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"dlc6\\dlc2_0_dat");
+    } else if(k==6) {
+    i=3;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"dlc8\\dlc3_0_dat");
+    } else if(k==7) {
+    i=981;
+    SPrintf(cislo,"%i",i);
+    FileOpen(cesta+"cases\\cases25_0_dat");
+    }
+
+    file2=GetFileNum();
+    velikostsouboru=FileSize();
+    pocetsegmentu=velikostsouboru/131072;
+    if(velikostsouboru%131072!=0) {
+        pocetsegmentu=pocetsegmentu+1;
+    }
+    FileSelect(file3);
+    zaloha=pozice+12;
+    WriteUInt(pozice,segs);
+    WriteUShort(pozice+4,7);
+    WriteUShort(pozice+6,pocetsegmentu);
+    WriteUInt(pozice+8,0);
+    InsertBytes(pozice+12,pocetsegmentu*4);
+    if((12+pocetsegmentu*4)%16!=0) {
+        pomocny=(12+pocetsegmentu*4)/16;
+        pomocny=16*(pomocny+1);
+        InsertBytes(pozice+12+pocetsegmentu*4,pomocny-(12+pocetsegmentu*4));
+        pozice=pozice+pomocny;
+    } else {
+        pozice=pozice+(12+pocetsegmentu*4);
+        
+    }
+    FileSelect(file2);
+    for(j=0;j<pocetsegmentu;j++) {
+        SPrintf(cislo2,"%i",j);
+        if(j!=pocetsegmentu-1) {
+            ReadBytes(buffer,j*131072,131072);
+            FileNew();
+            WriteBytes(buffer,0,131072);
+            FileSave(cesta+"bms\\dlc"+cislo+"_"+cislo2+"_dat");
+            FileClose();
+        
+            FileNew();
+            volani="CD "+cesta+"bms\\ \n quickbms.exe deflate_compress.bms dlc"+cislo+"_"+cislo2+"_dat "+cesta+"bms\\ \n EXIT";
+            WriteString(0,volani);
+            FileSave(cesta+"bms\\bat2.bat");
+            FileClose();
+            Exec(cesta+"bms\\bat2.bat"," ",true);
+    
+            FileOpen(cesta+"bms\\dlc"+cislo+"_"+cislo2+"_dat.zip");
+            velikostzmen=FileSize();
+            if(velikostzmen%16!=0) {
+                pomocny=velikostzmen/16;
+                pomocny=16*(pomocny+1);
+                InsertBytes(velikostzmen,pomocny-velikostzmen);
+                velikostzmen=FileSize();
+            } 
+            ReadBytes(buffer,0,velikostzmen);
+            FileClose();
+            FileSelect(file3);
+            WriteBytes(buffer,pozice,velikostzmen);
+            pozice=pozice+velikostzmen;
+            
+            pomocny3=velikostzmen/65536;
+            WriteUShort(zaloha+j*4,velikostzmen-pomocny3*65536);
+            WriteUByte(zaloha+j*4+2,16);
+            WriteUByte(zaloha+j*4+3,pomocny3);
+            FileSelect(file2);
+        } else {
+            pomocny2=FileSize()-j*131072;
+            ReadBytes(buffer,j*131072,pomocny2);
+            FileNew();
+            WriteBytes(buffer,0,pomocny2);
+            FileSave(cesta+"bms\\dlc"+cislo+"_"+cislo2+"_dat");
+            FileClose();
+        
+            FileNew();
+            volani="CD "+cesta+"bms\\ \n quickbms.exe deflate_compress.bms dlc"+cislo+"_"+cislo2+"_dat "+cesta+"bms\\ \n EXIT";
+            WriteString(0,volani);
+            FileSave(cesta+"bms\\bat2.bat");
+            FileClose();
+            Exec(cesta+"bms\\bat2.bat"," ",true);
+    
+            FileOpen(cesta+"bms\\dlc"+cislo+"_"+cislo2+"_dat.zip");
+            velikostzmen=FileSize();
+            if(velikostzmen%16!=0) {
+                pomocny=velikostzmen/16;
+                pomocny=16*(pomocny+1);
+                InsertBytes(velikostzmen,pomocny-velikostzmen);
+                velikostzmen=FileSize();
+            } 
+            ReadBytes(buffer,0,velikostzmen);
+            FileClose();
+            FileSelect(file3);
+            WriteBytes(buffer,pozice,velikostzmen);
+            pozice=pozice+velikostzmen;
+            
+            pomocny3=velikostzmen/65536;
+            WriteUShort(zaloha+j*4,velikostzmen-pomocny3*65536);
+            WriteUByte(zaloha+j*4+2,16);
+            WriteUByte(zaloha+j*4+3,pomocny3);
+            FileSelect(file2);
+        }
+    
+    }
+    DeleteFile(cesta+"bms\\bat2.bat");
+    for(j=0;j<pocetsegmentu;j++) {
+    SPrintf(cislo2,"%i",j);
+    DeleteFile(cesta+"bms\\dlc"+cislo+"_"+cislo2+"_dat");
+    DeleteFile(cesta+"bms\\dlc"+cislo+"_"+cislo2+"_dat.zip");
+    
+    }
+    FileSelect(file2);
+    FileClose();
+
+
+
+    FileSelect(file3);
+    velikostsouboru2=FileSize();
+    if(velikostsouboru2>1000000) Printf("Problem s velikosti bufferu! \n");
+    ReadBytes(buffer,0,velikostsouboru2);
+    FileClose();
+    
+    FileSelect(file1);
+    puvpoloha=ReadUInt(zakladnipozice+8+i*20+4);
+    puvvelikost=ReadUInt(zakladnipozice+8+i*20+16);
+    rozdil=velikostsouboru2-puvvelikost;
+    DeleteBytes(puvpoloha*16,puvvelikost);
+    InsertBytes(puvpoloha*16,velikostsouboru2);
+    WriteBytes(buffer,puvpoloha*16,velikostsouboru2);
+    zakladnipozice=zakladnipozice+rozdil;
+    WriteUInt(zakladnipozice+8+i*20+8,velikostsouboru);
+    WriteUInt(zakladnipozice+8+i*20+16,velikostsouboru2);
+    for(j=0;j<pocet;j++) {
+        if(ReadUInt(zakladnipozice+8+j*20+4)>puvpoloha) WriteUInt(zakladnipozice+8+j*20+4,ReadUInt(zakladnipozice+8+j*20+4)+(rozdil/16));
+    }
+    FileSave(GetFileName());
+    FileClose();
+}

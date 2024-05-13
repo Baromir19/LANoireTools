@@ -1,0 +1,107 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint subtitleidentifikator=476545086;
+uint velikost;
+uint pozice;
+uint file1;
+uint file2;
+ubyte bufer[10000000];
+int i;
+int j;
+int k; 
+int elko;
+ushort enter=2573;
+uint pocet;
+uint pocetvnitrnichzaznamu;
+uint kdejsem;
+string texter;
+uint textervelikost;
+uint delitko=4294901760; // 0000FFFF
+string cesta;
+int rozdil;
+cesta="C:\\LANOIRE\\";
+
+FileOpen(cesta+"out\\attribute\\root.atb.pc");
+file1=GetFileNum();
+DisableUndo();
+
+FileOpen(cesta+"root\\root-eng.txt");
+DisableUndo();
+if(ReadUShort(0)==48111) DeleteBytes(0,3); // EF BB BF
+ReplaceAll(enter,delitko,true,false,false,0.0,1,0,0,false);
+InsertBytes(0,4);
+WriteUInt(0,delitko);
+TFindResults ztxt = FindAll(delitko,true,false,false,0.0,1,0,0);
+kdejsem=0;
+file2=GetFileNum();
+
+FileSelect(file1);
+TFindResults kom = FindAll(subtitleidentifikator,true,false,false,0.0,1,0,0);
+uint poleshodnotami[kom.count];
+for(i=0;i<kom.count;i++) {
+    poleshodnotami[i]=kom.start[i];
+}
+
+for(i=0;i<kom.count;i++) {
+    pozice=poleshodnotami[i]+4;
+    velikost=ReadUByte(pozice);
+    pozice=pozice+1;
+    pozice=pozice+velikost+6;
+    kdejsem=kdejsem+1;
+    pocet=ReadUShort(pozice);
+    pozice=pozice+2;
+    for(j=0;j<pocet;j++) {
+        pozice=pozice+9;       
+        velikost=ReadUShort(pozice);
+        pozice=pozice+2;  
+        pozice=pozice+velikost;     
+        kdejsem=kdejsem+1;    
+        pocetvnitrnichzaznamu=6;
+        if(i==0 ) pocetvnitrnichzaznamu=7; 
+        if(i==1 ) pocetvnitrnichzaznamu=7;
+        for(k=0;k<pocetvnitrnichzaznamu;k++) {  
+            pozice=pozice+5;
+            velikost=ReadUShort(pozice);
+            pozice=pozice+2;  
+            if(velikost>0) {
+                if(k==0) {
+                    FileSelect(file2);
+                    texter=ReadString(ztxt.start[kdejsem]+4);
+                    textervelikost=Strlen(texter);
+                    ReadBytes(bufer,ztxt.start[kdejsem]+4,textervelikost);
+                    kdejsem=kdejsem+1;
+                    FileSelect(file1);
+                    DeleteBytes(pozice,velikost);
+                    InsertBytes(pozice,textervelikost);
+                    WriteBytes(bufer,pozice,textervelikost);
+                    WriteUShort(pozice-2,textervelikost);
+                    pozice=pozice+textervelikost;     
+                    rozdil=textervelikost-velikost;
+                    for(elko=i+1;elko<kom.count;elko++) {
+                        poleshodnotami[elko]=poleshodnotami[elko]+rozdil;
+                    }
+                } else {
+                    pozice=pozice+velikost;
+                }
+            } else {
+                if(k==0) {
+                    kdejsem=kdejsem+1;        
+                }
+            }
+        } 
+        pozice=pozice+1;
+    }
+    kdejsem=kdejsem+1; 
+}
+FileSelect(file2);
+FileClose();
+FileSelect(file1);
+FileSave(GetFileName());
+FileClose();

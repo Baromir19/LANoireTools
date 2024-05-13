@@ -1,0 +1,79 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+local uint i;
+uint BMF;
+struct header {
+ubyte one; // block number;
+uint headersize;
+uint something;
+ushort c100;
+if(c100!=100) Printf("Problem! (100) \n");
+ushort c4;
+if(c4!=4) Printf("Problem! (4) \n");
+ushort zero;
+if(zero!=0) Printf("Problem! (0) \n");
+ushort c256;
+if(c256!=256) Printf("Problem! (256) \n");
+ushort c1; // neni vzdy
+if(c1!=1) Printf("Problem! (1) \n");
+char fontname[headersize-14];
+} record;
+struct sizeblock {
+ubyte two; // blocknumber;
+uint sizeofsizeblock;
+ushort something1;
+ushort something2;
+ushort width;
+ushort height;
+ushort c1;
+if(c1!=1) Printf("Problem! (1) \n");
+ushort c256;
+if(c256!=256) Printf("Problem! (256) \n");
+ubyte zeros[sizeofsizeblock-12];
+} record;
+struct name {
+ubyte three;//  blocknumber;
+uint sizeofname;
+char name1[sizeofname];
+} record;
+struct fonts {
+ubyte four;// blocknumber;
+uint sizeofdata;
+local uint pocet;
+pocet=sizeofdata/20;
+for(i=0;i<pocet;i++) {
+struct font {
+uint unicode;
+ushort x;
+ushort y; 
+ushort width;
+ushort height;
+ushort xrelated;
+ushort yrelated;
+ushort xrelated2;
+ushort yrelated2;
+} record;
+}
+} record;
+if(!FEof()) {
+struct kernels {
+ubyte five;// blocknumber;
+uint sizeofkernel;
+local uint pocet2;
+pocet2=sizeofkernel/10;
+for(i=0;i<pocet2;i++) {
+struct kernel {
+uint char1;
+uint char2;
+short shift;
+} record;
+}
+} record;
+}

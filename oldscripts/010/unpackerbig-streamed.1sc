@@ -1,0 +1,92 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+uint i;
+uint velikost;
+uint pozice;
+uint zaloha;
+ushort pocet;
+ubyte cislo;
+uint file1;
+string cesta;
+uint j;
+file1=GetFileNum();
+cesta="C:\\LANOIRE\\bms";
+pozice=0;
+j=0;
+do {
+pocet=ReadUShort(pozice+6)-1;
+zaloha=pozice+16;
+pozice=pozice+192;
+for(i=0;i<pocet;i++) {
+    velikost=ReadUShort(zaloha);
+    cislo=ReadUByte(zaloha+3);
+    zaloha=zaloha+4;
+    velikost=velikost+65536*cislo;
+    Kopirovac(file1,pozice,cesta,velikost,j,i);
+    pozice=pozice+velikost;
+}
+if(pocet>1) {
+    Kopirovac2(file1,cesta,pocet,j);
+}
+j=j+1;
+} while(ReadUInt(pozice)==1936025459);
+
+void Kopirovac(uint file1, uint pozice, string cesta, uint velikost, uint j, uint i)
+{
+    ubyte buffer[velikost];
+    string volani;
+    string a;
+    string b;
+    SPrintf(a,"%i",i);
+    SPrintf(b,"%i",j);
+    FileSelect(file1);
+    ReadBytes(buffer,pozice,velikost);
+    FileNew();
+    WriteBytes(buffer,0,velikost);
+    FileSave(cesta+"\\streamed"+b+"_"+a+"_dat.lzx");
+    FileClose();
+    FileNew();
+    volani="CD "+cesta+"\\ \n quickbms.exe xboxlzx.bms streamed"+b+"_"+a+"_dat.lzx "+cesta+"\\ \n EXIT";
+    WriteString(0,volani);
+    FileSave(cesta+"\\bat.bat");
+    FileClose();
+    Exec(cesta+"\\bat.bat"," ",true);
+    FileSelect(file1);
+}
+void Kopirovac2(uint file1, string cesta, uint pocet, uint j)
+{
+    ubyte buffer[10000000];
+    uint velikost;
+    uint poposka;
+    string a;
+    string b;
+    uint k;
+    uint file3;
+    SPrintf(b,"%i",j);
+    SPrintf(a,"%i",0);
+    FileOpen(cesta+"\\streamed"+b+"_"+a+"_dat");
+    file3=GetFileNum();
+    poposka=FileSize();
+    for(k=1;k<pocet;k++) {
+        SPrintf(a,"%i",k);
+        FileOpen(cesta+"\\streamed"+b+"_"+a+"_dat");
+        velikost=FileSize();
+        ReadBytes(buffer,0,velikost);  
+        FileClose();  
+        FileSelect(file3);
+        WriteBytes(buffer,poposka,velikost);
+        poposka=poposka+velikost;
+        DeleteFile(cesta+"\\streamed"+b+"_"+a+"_dat");
+    }   
+    FileSelect(file3); 
+    FileSave(GetFileName());
+    FileClose();
+    FileSelect(file1);
+}

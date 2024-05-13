@@ -1,0 +1,5 @@
+comtype deflate
+get SIZE asize
+get NAME filename
+string NAME -= ".zip"
+clog NAME 0 SIZE 10000000

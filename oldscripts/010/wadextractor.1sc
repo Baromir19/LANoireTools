@@ -1,0 +1,69 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Script File
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+uint pocetsouboru;
+uint pozice;
+uint velikost;
+uint pozicejmen;
+uint poz;
+int i;
+uint file1;
+string cesta;
+file1=GetFileNum();
+pocetsouboru=ReadUInt(4);
+pozicejmen=ReadUInt(4+8+12*(pocetsouboru-1))+ReadUInt(8+8+12*(pocetsouboru-1));
+poz=pozicejmen;
+MakeDir("C:\\LANOIRE");
+cesta="C:\\LANOIRE\\";
+for(i=0;i<pocetsouboru;i++) {
+    velikost=ReadUInt(8+8+12*i);
+    pozice=ReadUInt(4+8+12*i);
+    poz=Kopirovac(file1, poz, cesta, velikost, pozice);
+}
+
+uint Kopirovac(uint file1, uint poz, string cesta, uint velikost, uint pozice)
+{
+    ubyte buffer[velikost];
+    string jmeno2;
+    uint velikoststringu;
+    byte lomitko;
+    byte zpetnelom;
+    char esko;
+    int poska;
+    int acko;
+    string nouma;
+    poska=0;
+    acko=0;
+    esko='/';
+    lomitko=47;
+    zpetnelom=92;
+    FileSelect(file1);
+    velikoststringu=ReadUShort(poz);
+    uchar jmeno[velikoststringu];
+    poz=poz+2;
+    ReadBytes(buffer,pozice,velikost);
+    ReadBytes(jmeno,poz,velikoststringu);
+    jmeno2=jmeno;
+    nouma=jmeno2;
+    do {
+        acko=Strchr(nouma,esko);
+        if(acko!=-1) {
+             poska=poska+acko+1;
+             nouma=SubStr(nouma,acko+1,Strlen(nouma)-acko-1);
+        }
+    } while(acko!=-1);
+    jmeno2=SubStr(jmeno2,0,poska);
+    MakeDir(cesta+jmeno2);
+    FileNew();
+    WriteBytes(buffer,0,velikost);
+    FileSave(cesta+jmeno);
+    FileClose();
+    poz=poz+velikoststringu;
+    FileSelect(file1);
+    return poz;
+}

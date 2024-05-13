@@ -1,0 +1,31 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+uint segs;
+ushort version;
+ushort numberof;
+uint64 cosi;
+local uint i;
+local uint svelikost;
+local uint pozice;
+local uint zaloha;
+pozice=192;
+for(i=0;i<(numberof-1);i++) {
+struct comprimed {
+    ushort size;
+    ubyte somthing;
+    ubyte number;
+    svelikost=size+65536*number;
+    zaloha=FTell();    
+    FSeek(pozice);
+    byte data[svelikost];
+    pozice=pozice+svelikost;
+    FSeek(zaloha);
+} record;
+}

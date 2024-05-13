@@ -1,0 +1,25 @@
+//--------------------------------------
+//--- 010 Editor v3.1.1 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+LittleEndian();
+uint32 wad;
+uint32 numberoffiles;
+local int i;
+local int j;
+struct files {
+for(i=0;i<numberoffiles;i++) {
+struct file {
+    uint32 ID;
+    uint32 position;
+    uint32 size;
+    j=position+size;
+} record;
+}
+} record;
+FSeek(j);
+byte names[FileSize()-j];
