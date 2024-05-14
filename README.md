@@ -23,3 +23,5 @@ New scripts were created by me (unpacker of big files based on Python2 big unpac
 Theoretically, you don't need to pack the files, you just need to know their full converted names. According to Falo, these names can be found in the .atb files, but there are real names indicated there, they need to be converted to L.A.Noire format (atb -> chunk.atb, dae -> chunk). The converted file format can be found using a hash function (the function was also found by Falo, I placed it in `additional_functions.py`). An example induced by Falo:
 - real filename: characters/dead_bodies/pt007_kenneth_temple.dae
 - converted filename: intermediate/chunks/characters/dead_bodies/pt007_kenneth_temple.chunk
+
+.atb files has next format: `intermediate/chunks/attribute/root."BIGNAME"."ATBNAME".atb.chunk`, where "BIGNAME" is name of .big file (no file format, f.e. "dlc.dlc4"), "ATBNAME" - name of .atb file (with my .atb to .xml tool you can see that among the upper classes or collections there is a file name in a format of 2 letters and 3 numbers, f.e. "AT004". Is optional in the name).
