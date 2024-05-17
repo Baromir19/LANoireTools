@@ -3,9 +3,10 @@ These tools were created to modify L.A.Noire. Currently, they can only get infor
 
 The tools for "oldscripts" were created by other people, I only found them in the archives of the Internet:
 * `010 Tools` was created by Kramla
-* `Python2 .big unpacker` was created by flatz (not sure)
+* `Python2 .big unpacker` was created by flatz
 * `BMS .big unpacker` was created by Falo (not sure)
-* `010 Tools` for Nintendo Switch ver. can be found here [here](https://github.com/masagrator/LANoireNX)
+* `010 Tools` for Nintendo Switch ver. can be found [here](https://github.com/masagrator/LANoireNX)
+* `.fsb4 unpacker` can be found [here](https://hcs64.com/vgm_ripping.html)
 
 New scripts were created by me (unpacker of big files based on Python2 big unpacker):
 * `bigpc3.py` - unpacks the .big.pc archive, uses Python 3. The file has entries, each entry is divided into chunks, which are 128 kilobytes in size when unpacked (except for the last chunk, which can be any size up to 128 kilobytes, which is necessary to pack the entry). Chunks are packed in "deflate" format (RFC1950/1/2, untitled, unmagisked), my attempts to pack them back were unsuccessful (the result was a file size larger than it was originally packed);
