@@ -2,6 +2,12 @@ import sys, os, errno
 import array
 from struct import *
 import zlib
+import xml.etree.ElementTree as ET
+
+entry_xml_root = None
+entry_xml_segments = None
+
+entries_dir = None
 
 def align(x, a):
     return (x + (a - 1)) & ~(a - 1)
@@ -50,6 +56,8 @@ class BigArchive:
             print(f'Unsupported archive type {archive_type}')
             return
 
+        entry_xml_table = ET.SubElement(entry_xml_root, 'table', attrib={'archive_type': f'{archive_type}', 'num_entries': f'{num_entries}'}) # num_entries is necessary, since their number can be 0
+
         self.entries = []
         for i in range(num_entries):
             entry = self.Entry()
@@ -59,6 +67,11 @@ class BigArchive:
             entry_offset_hi = entry_offset >> 28
             entry.offset = entry_offset_lo
             # size3 for compressed segs
+
+            entry_xml_table_row = ET.SubElement(entry_xml_table, 'row', attrib={'hash': f'0x{entry.hash:08x}', 'offset': f'0x{entry.offset:08x}'})
+            ET.SubElement(entry_xml_table_row, 'size1').text = f'{entry.size1}'
+            ET.SubElement(entry_xml_table_row, 'size2').text = f'{entry.size2}'
+            ET.SubElement(entry_xml_table_row, 'size3').text = f'{entry.size3}'
 
             self.entries.append(entry)
 
@@ -76,6 +89,9 @@ class BigArchive:
         data = self.file.read(size)
         self.dumpEntry(entry, data)
 
+        # 1 case indicates that the segment is proceed with 1 chunk (without multithreading?) 
+        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'hash': f'0x{entry.hash:08x}', 'case': '1'})
+
     def processMulti(self, entry):
         self.file.seek(entry.offset)
         (magic, type, num_chunks, u0, u1, u2, u3) = unpack(self.endianness + 'I2H4B', self.file.read(calcsize(self.endianness + 'I2H4B')))
@@ -83,6 +99,9 @@ class BigArchive:
         print(f'\tNum chunks: {num_chunks}')
         print(f'\tUnknown: {u0} {u1} {u2} {u3}')
         data_offset = align(self.file.tell() + u0 * calcsize(self.endianness + 'I') + num_chunks * calcsize(self.endianness + '2H'), 16)
+
+        # 2 case indicates that the segment is proceed with many chunks (with multithreading?) 
+        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'hash': f'0x{entry.hash:08x}', 'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}', 'case': '2'})
 
         uobjs = []
         for i in range(u0):
@@ -107,6 +126,7 @@ class BigArchive:
 
             print(f'\tObject {i}:')
             print(f'\t\tData: {uobj}')
+            ET.SubElement(entry_xml_segment, 'object').text = uobj
         print('')
 
         for i in range(len(chunks)):
@@ -118,6 +138,9 @@ class BigArchive:
             print(f'\t\tFlags: 0x{chunk.flags:02x}')
             print(f'\t\tSize coeff: {chunk.size_coeff}')
 
+            # size & offset probably useless
+            entry_xml_chunk = ET.SubElement(entry_xml_segment, 'chunk', attrib={'flags': f'0x{chunk.flags:02x}', 'size_coefficient': f'{chunk.size_coeff}', 'size': f'{chunk.size}', 'offset': f'{chunk.offset}'})
+
             self.file.seek(chunk.offset)
             if chunk.flags & 0x10:
                 data += zlib.decompress(self.file.read(chunk.size), -15)
@@ -127,13 +150,16 @@ class BigArchive:
         self.dumpEntry(entry, data)
 
     def unpack(self):
+        global entry_xml_segments, entries_dir
+        entry_xml_segments = ET.SubElement(entry_xml_root, 'segments')
+
         num_segments = 0
         entries_dir = f'entries/{self.file_name}'
         mkdirSafe(entries_dir)
         with open(f'{entries_dir}/entries.txt', 'w') as entries_list_file:
             if not self.entries:
                 offset = 0
-                
+
                 while offset < self.file_table_offset:
                     self.file.seek(offset)
 
@@ -145,6 +171,9 @@ class BigArchive:
                         print(f'\tNum chunks: {num_chunks}')
                         print(f'\tUnknown: {u0} {u1} {u2} {u3}')
                         data_offset = align(self.file.tell() + u0 * calcsize(self.endianness + 'I') + num_chunks * calcsize(self.endianness + '2H'), 16)
+
+                        # num_chunks, u1-u3 probably useless; 0 case indicates that the segment is proceed without a entries table 
+                        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'hash': f'0x{entry.hash:08x}', 'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}', 'case': '0'})
 
                         uobjs = []
                         for i in range(u0):
@@ -171,6 +200,7 @@ class BigArchive:
 
                             print(f'\tObject {i}:')
                             print(f'\t\tData: {uobj}')
+                            ET.SubElement(entry_xml_segment, 'object').text = uobj
                         print('')
 
                         for i in range(len(chunks)):
@@ -182,6 +212,9 @@ class BigArchive:
                             print(f'\t\tFlags: 0x{chunk.flags:02x}')
                             print(f'\t\tSize coeff: {chunk.size_coeff}')
 
+                            # size & offset probably useless
+                            entry_xml_chunk = ET.SubElement(entry_xml_segment, 'chunk', attrib={'flags': f'0x{chunk.flags:02x}', 'size_coefficient': f'{chunk.size_coeff}', 'size': f'{chunk.size}', 'offset': f'{chunk.offset}'})
+
                             self.file.seek(chunk.offset)
                             if chunk.flags & 0x10:
                                 data += zlib.decompress(self.file.read(chunk.size), -15)
@@ -189,7 +222,9 @@ class BigArchive:
                                 data += self.file.read(chunk.size)
                         print(f'Total size: {chunks_total_size}')
 
-                        with open(f'segments/{self.file_name}/{num_segments:06d}', 'wb') as fout:
+                        entry_dir = f'segments/{self.file_name}'
+                        mkdirSafe(entry_dir)
+                        with open(f'{entry_dir}/{num_segments:06d}', 'wb') as fout:
                             fout.write(data)
 
                         while self.file.tell() + 16 < self.file_table_offset:
@@ -232,6 +267,8 @@ class BigArchive:
                 print('')
 
 def processFile(file_name):
+    global entry_xml_root
+
     endianness = None
     if file_name.endswith('.pc'):
         endianness = '<'
@@ -244,6 +281,8 @@ def processFile(file_name):
         print('Unknown format')
         return
 
+    entry_xml_root = ET.Element('root', attrib={'endianness': endianness, 'file_name': os.path.basename(file_name)})
+
     with open(file_name, 'rb') as file:
         try:
             arc = BigArchive(file, endianness, os.path.basename(file_name))
@@ -254,3 +293,6 @@ def processFile(file_name):
 
 mkdirSafe('segments')
 list(map(lambda x: processFile(x) if os.path.exists(x) else None, sys.argv[1:]))
+
+tree = ET.ElementTree(entry_xml_root)
+tree.write(f'{entries_dir}/entries.xml')
