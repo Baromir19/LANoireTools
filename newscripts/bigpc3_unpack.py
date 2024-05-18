@@ -172,8 +172,8 @@ class BigArchive:
                         print(f'\tUnknown: {u0} {u1} {u2} {u3}')
                         data_offset = align(self.file.tell() + u0 * calcsize(self.endianness + 'I') + num_chunks * calcsize(self.endianness + '2H'), 16)
 
-                        # num_chunks, u1-u3 probably useless; 0 case indicates that the segment is proceed without a entries table 
-                        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'hash': f'0x{entry.hash:08x}', 'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}', 'case': '0'})
+                        # num_chunks, u1-u3 probably useless; 0 case indicates that the segment is proceed without a entries table. Without hash
+                        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}', 'case': '0'})
 
                         uobjs = []
                         for i in range(u0):
@@ -287,12 +287,11 @@ def processFile(file_name):
         try:
             arc = BigArchive(file, endianness, os.path.basename(file_name))
             arc.unpack()
+            tree = ET.ElementTree(entry_xml_root)
+            tree.write(f'{entries_dir}/entries.xml')
         except EOFError:
             print('Failed open file')
             return
 
 mkdirSafe('segments')
 list(map(lambda x: processFile(x) if os.path.exists(x) else None, sys.argv[1:]))
-
-tree = ET.ElementTree(entry_xml_root)
-tree.write(f'{entries_dir}/entries.xml')
