@@ -223,6 +223,8 @@ def read_object_variable(file, data_address, father_element, is_array_element = 
 
             data_address = read_array(file, data_address, array_size, array_type, object_subelement)
 
+        elif var_size == 50:
+            result_value = '0x' + ''.join([f'{b:02x}' for b in result_value])
         elif var_size == 40:
             result_value = '0x' + ''.join([f'{b:02x}' for b in result_value])
         elif var_size == 30:
