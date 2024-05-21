@@ -69,9 +69,9 @@ class BigArchive:
             # size3 for compressed segs
 
             entry_xml_table_row = ET.SubElement(entry_xml_table, 'row', attrib={'hash': f'0x{entry.hash:08x}', 'offset': f'0x{entry.offset:08x}'})
-            ET.SubElement(entry_xml_table_row, 'size1').text = f'{entry.size1}'
-            ET.SubElement(entry_xml_table_row, 'size2').text = f'{entry.size2}'
-            ET.SubElement(entry_xml_table_row, 'size3').text = f'{entry.size3}'
+            ET.SubElement(entry_xml_table_row, 'decompressed_block1_size').text = f'{entry.size1}'
+            ET.SubElement(entry_xml_table_row, 'decompressed_block2_size').text = f'{entry.size2}'
+            ET.SubElement(entry_xml_table_row, 'compressed_size').text = f'{entry.size3}'
 
             self.entries.append(entry)
 
@@ -84,13 +84,13 @@ class BigArchive:
     def processSingle(self, entry):
         size = entry.size3
         if size == 0:
-            size = entry.size1
+            size = entry.size1 + entry.size2
         self.file.seek(entry.offset)
         data = self.file.read(size)
         self.dumpEntry(entry, data)
 
         # 1 case indicates that the segment is proceed with 1 chunk (without multithreading?) 
-        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'hash': f'0x{entry.hash:08x}', 'case': '1'})
+        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'case': '1', 'hash': f'0x{entry.hash:08x}'})
 
     def processMulti(self, entry):
         self.file.seek(entry.offset)
@@ -101,7 +101,7 @@ class BigArchive:
         data_offset = align(self.file.tell() + u0 * calcsize(self.endianness + 'I') + num_chunks * calcsize(self.endianness + '2H'), 16)
 
         # 2 case indicates that the segment is proceed with many chunks (with multithreading?) 
-        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'hash': f'0x{entry.hash:08x}', 'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}', 'case': '2'})
+        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'case': '2', 'hash': f'0x{entry.hash:08x}', 'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}'})
 
         uobjs = []
         for i in range(u0):
@@ -145,7 +145,7 @@ class BigArchive:
             if chunk.flags & 0x10:
                 data += zlib.decompress(self.file.read(chunk.size), -15)
             else:
-                data += self.file.read(chunk.size)
+                data += self.file.read(entry.size1) # chunk.size isnt used, since flag 0x00 assumes that the file smaller in size without compression.  
 
         self.dumpEntry(entry, data)
 
@@ -173,7 +173,7 @@ class BigArchive:
                         data_offset = align(self.file.tell() + u0 * calcsize(self.endianness + 'I') + num_chunks * calcsize(self.endianness + '2H'), 16)
 
                         # num_chunks, u1-u3 probably useless; 0 case indicates that the segment is proceed without a entries table. Without hash
-                        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}', 'case': '0'})
+                        entry_xml_segment = ET.SubElement(entry_xml_segments, 'segment', attrib={'case': '0', 'type': f'{type}', 'u0': f'{u0}', 'u1': f'{u1}', 'u2': f'{u2}', 'u3': f'{u3}'})
 
                         uobjs = []
                         for i in range(u0):
