@@ -263,3 +263,23 @@ OBJECT_TYPES_DICTIONARY = { # I think the values is hashed in 4 bytes
     b'\xAD\x81\xB2\x77': 'Transform',
     # conversation base
 }
+
+FILE_EXTENSIONS_DICTIONARY = { 
+    b'\x41\x54\x42\x04': 'atb',                 # attribute
+    b'\x46\x45\x56\x31': 'fev',                 # unknown format, for music, version 1
+    b'\x46\x53\x42\x34': 'fsb',                 # compressed music, fsbank (4)
+    b'\x44\x47\x41\x44': 'bin',                 # unknown (dgad) format
+    b'\x42\x4D\x46\x03': 'fnt',                 # bmf font format
+    b'\x44\x44\x53\x20': 'dds',                 # dds image format
+    b'\x74\x72\x4D\x23': 'pack',                # unknown trM# format, archive?
+    b'\x74\x72\x4D\x23': 'trunk',               # also trM#
+    b'\x54\x52\x4C\x41': 'ids',                 # TRLA, for always loaded textures? uknown file extension
+    b'\x23\x4D\x70\x70': 'bin.dx9',             # unknown format
+    b'\xC5\x3C\x00\x00': 'vfp.dx11',            # unknown format
+    b'\xDE\x3C\x00\x00': 'vfp.dx9',             # unknown format
+    b'\x70\x74\x4D\x23': 'packedragdoll',       # ptM# format, uses Havok serialization?
+    b'\x70\x74\x4D\x23': 'packedskeleton',      # ptM# format too
+    b'\x70\x74\x4D\x23': 'roadnavnetwork.uber', # ptM# format too. or just uber
+    b'\x43\x42\x46\x31': 'contents',            # CBF1, is this where the naming of all files is located?
+    b'\x52\x4E\x4D\x23': 'roadnavdata',         # RNM#
+}
