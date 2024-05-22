@@ -6,7 +6,7 @@ The tools for "oldscripts" were created by other people, I only found them in th
 * `Python2 .big unpacker` was created by flatz
 * `BMS .big unpacker` was created by Falo (not sure)
 * `010 Tools` for Nintendo Switch ver. can be found [here](https://github.com/masagrator/LANoireNX)
-* `.fsb4 unpacker` can be found [here](https://hcs64.com/vgm_ripping.html)
+* `.fsb4 unpacker` can be found [here](https://hcs64.com/vgm_ripping.html) (fsb_mpeg). For packaging, you need to make a WAV format from MP3, and then convert it using [fsbankex.exe](https://www.playground.ru/mafia_2/file/mafia_2_konvertatsiya_muzyki_k_igre-888201?ysclid=lwhv6vorvu171450274)
 
 New scripts were created by me (unpacker of big files based on Python2 big unpacker):
 * `bigpc3_unpack.py` - unpacks the .big.pc archive, uses Python 3. The file has entries, each entry is divided into chunks, which are 128 kilobytes in size when unpacked (except for the last chunk, which can be any size up to 128 kilobytes, which is necessary to pack the entry). Chunks are packed in "deflate" format (RFC1950/1/2, untitled, unmagisked);
