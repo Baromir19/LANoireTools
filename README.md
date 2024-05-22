@@ -30,3 +30,4 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 
 .atb files has next format: `intermediate/chunks/attribute/root."BIGNAME"."ATBNAME".atb.chunk`, where "BIGNAME" is name of .big file (no file format, f.e. "dlc.dlc4"), "ATBNAME" - name of .atb file (with my .atb to .xml tool you can see that among the upper classes or collections there is a file name in a format of 2 letters and 3 numbers, f.e. "at004". Is optional in the name).
 
+Information about [ptM#](https://zeldamods.org/w_botw/index.php?title=Havok&mobileaction=toggle_view_desktop) header (packedragdoll).
