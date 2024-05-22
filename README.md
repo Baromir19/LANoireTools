@@ -1,12 +1,12 @@
 # Main
-These tools were created to modify L.A.Noire. Currently, they can only get information (unpacking), but in the future I will try to pack the files to big.pc (.ps3, .360).
+These tools were created to modify L.A.Noire.
 
 The tools for "oldscripts" were created by other people, I only found them in the archives of the Internet:
 * `010 Tools` was created by Kramla
 * `Python2 .big unpacker` was created by flatz
 * `BMS .big unpacker` was created by Falo (not sure)
 * `010 Tools` for Nintendo Switch ver. can be found [here](https://github.com/masagrator/LANoireNX)
-* `.fsb4 unpacker` can be found [here](https://hcs64.com/vgm_ripping.html)
+* `.fsb4 unpacker` can be found [here](https://hcs64.com/vgm_ripping.html) (fsb_mpeg). For packaging, you need to make a WAV format from MP3, and then convert it using [fsbankex.exe](https://www.playground.ru/mafia_2/file/mafia_2_konvertatsiya_muzyki_k_igre-888201?ysclid=lwhv6vorvu171450274)
 
 New scripts were created by me (unpacker of big files based on Python2 big unpacker):
 * `bigpc3_unpack.py` - unpacks the .big.pc archive, uses Python 3. The file has entries, each entry is divided into chunks, which are 128 kilobytes in size when unpacked (except for the last chunk, which can be any size up to 128 kilobytes, which is necessary to pack the entry). Chunks are packed in "deflate" format (RFC1950/1/2, untitled, unmagisked);
@@ -15,6 +15,7 @@ New scripts were created by me (unpacker of big files based on Python2 big unpac
 * `atb_unpack.py`/`atb_directory_unpack.py` - unpacks strings from the .atb file(-s) (deprecated, but may be useful to someone);
 * `atb_to_array.py` - performs a complete decompression of the archive into arrays, which in the future can be processed at your own request;
 * `atb_to_xml.py` - unpacks .atb into an .xml file. It was created at the request of LANoire. It is not clear whether LANoire can read .xml files instead of .atb chunks, especially since there are many problems that I have not solved (the format of the names of the .xml files, the root tag, as well as the names of objects and their type);
+* `xml_to_atb.py` - packs .xml into an .atb file. Hash sum of the repacked and original ATB files match
 * `dictionaries.py` - additional file for atb_to_xml, includes the types and sizes of variables behind the byte, as well as the types of objects behind the signature.
 
 ## How to use
