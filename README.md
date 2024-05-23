@@ -16,7 +16,7 @@ New scripts were created by me (unpacker of big files based on Python2 big unpac
 * `atb_to_xml.py` - unpacks .atb into an .xml file. It was created at the request of LANoire. It is not clear whether LANoire can read .xml files instead of .atb chunks, especially since there are many problems that I have not solved (the format of the names of the .xml files, the root tag, as well as the names of objects and their type);
 * `xml_to_atb.py` - packs .xml into an .atb file. Hash sum of the repacked and original ATB files match
 * `dictionaries.py` - additional file for atb_to_xml, includes the types and sizes of variables behind the byte, as well as the types of objects behind the signature;
-* `fileext.py` - adds a file extension, currently adds the name of a small number of file types. It is better not to use it if the files will be packed again in the future, since the hash value of the file path is needed to package the archive;
+* `fileext.py` - adds a file extension (dictionary-based). The script is intended to understand and work with file types, not to use them later (for which you need to get a full name from hash, which is described in Section 3). In order to add an extension, the 2nd parameter must be True, to remove the extension - False;
 * `atb_unpack.py`/`atb_directory_unpack.py` - unpacks strings from the .atb file(-s) (deprecated, but may be useful to someone);
 * `atb_to_array.py` - performs a complete decompression of the archive into arrays, which in the future can be processed at your own request.
 
