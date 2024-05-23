@@ -279,7 +279,7 @@ FILE_EXTENSIONS_DICTIONARY = {
     b'\xDE\x3C\x00\x00': 'vfp.dx9',             # unknown format
     b'\x70\x74\x4D\x23': 'packedragdoll',       # ptM# format, uses Havok serialization?
     b'\x70\x74\x4D\x23': 'packedskeleton',      # ptM# format too
-    b'\x70\x74\x4D\x23': 'roadnavnetwork.uber', # ptM# format too. or just uber
+    b'\x70\x74\x4D\x23': 'uber',                # ptM# format too. or with roadnavnetwork.
     b'\x43\x42\x46\x31': 'contents',            # CBF1, is this where the naming of all files is located?
     b'\x52\x4E\x4D\x23': 'roadnavdata',         # RNM#
 }

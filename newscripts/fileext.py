@@ -1,51 +1,69 @@
-import os
-import re
+import os, sys
 
-def sanitize_filename(filename): # additional function / useless for now
-    filename = filename.replace('\\x04', '_')
-    return re.sub(r'[^\w\-_\. ]', '_', filename)
+from dictionaries import FILE_EXTENSIONS_DICTIONARY 
 
-def rename_files(folder_path):
-    for filename in os.listdir(folder_path):
-        file_path = os.path.join(folder_path, filename)
+class FileRenamer:
+    def __init__(self, folder_path, with_extension = True):
+        self.folder_path = folder_path
+        self.with_extension = with_extension # True = add extension / False = remove extension
+
+    def rename_files(self):
+        with open(self.folder_path + '\\renamed.txt', 'wt') as renamed_file:
+            for filename in os.listdir(self.folder_path):
+                file_path = os.path.join(self.folder_path, filename)
+                if os.path.isfile(file_path):
+                    new_filename = ''
+                    if self.with_extension:
+                        self.process_file(file_path)
+                    else:
+                        self.remove_extension_if_magic(file_path)
+                    if new_filename:
+                        renamed_file.write(f"{filename} -> {new_filename}\n")
+
+    def process_file(self, file_path):
+        try:
+            with open(file_path, 'rb') as file:
+                magic_bytes = file.read(4)
+            if magic_bytes in FILE_EXTENSIONS_DICTIONARY:
+                extension = '.' + FILE_EXTENSIONS_DICTIONARY[magic_bytes]
+                new_filename = self.remove_extension(file_path) + extension
+                os.rename(file_path, new_filename) # here exception
+                return os.path.basename(new_filename)
+        except Exception as e:
+            print(f"Error reading {file_path}: {e}")
+        return None
+
+    def remove_extension_if_magic(self, file_path):
+        with open(file_path, 'rb') as file:
+            magic_bytes = file.read(4)
+        if magic_bytes in FILE_EXTENSIONS_DICTIONARY:
+            base_name = self.remove_extension(file_path)
+            os.rename(file_path, base_name)
+            return os.path.basename(base_name)
+        return None
+
+    def remove_extension(self, file_path):
+        base_name, _ = os.path.splitext(file_path)
+        return base_name
+
+if __name__ == '__main__':
+    try:
+        folder_path = sys.argv[1:][0]
+        if not os.path.exists(folder_path):
+            raise Exception('Path does not exist')
+    except:
+        folder_path = input('Path to folder: ')
+        if not os.path.exists(folder_path):
+            raise Exception('Path does not exist')
         
-        if os.path.isfile(file_path):
-            if '.' not in filename:
-                with open(file_path, 'rb') as file:
-                    header = file.read(4)
-                
-                # HEADER READERS
-                if header == b'FSB4':
-                    with open(file_path, 'rb') as file:
-                        file.seek(0x32)
-                        new_filename = file.read(0x50 - 0x32).decode().strip('\x00')
-                    new_filename = sanitize_filename(new_filename)
-                    new_extension = '.fsb'
-                elif header == b'ATB\x04':
-                    new_filename = sanitize_filename(filename)
-                    new_extension = '.atb'
-                else:
-                    # just for another ways
-                    try:
-                        new_extension = '.' + header.decode('ascii', 'ignore')
-                    except UnicodeDecodeError:
-                        new_extension = f'.{header.hex()}'
-                    new_filename = sanitize_filename(filename)
+    try:
+        if (sys.argv[1:][1]) == 'False':
+            to_rename = False
+        else: 
+            to_rename = True
+    except:
+        to_rename = True
 
-                new_extension = sanitize_filename(new_extension)
-                
-                new_file_path = os.path.join(folder_path, new_filename + new_extension)
 
-                # print(f'{new_file_path}')                
-                # additional suffix for existed names
-                suffix = 1
-                while os.path.exists(new_file_path):
-                    new_file_path = os.path.join(folder_path, f"{new_filename}_{suffix}{new_extension}")
-                    suffix += 1
-                
-                os.rename(file_path, new_file_path)
-                print(f"File renamed: {filename} -> {os.path.basename(new_file_path)}")
-
-if __name__ == "__main__":
-    folder_path = input("Enter the path for the folder with files: ")
-    rename_files(folder_path)
+    renamer = FileRenamer(folder_path, to_rename)
+    renamer.rename_files()
