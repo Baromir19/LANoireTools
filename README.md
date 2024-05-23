@@ -33,6 +33,19 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 
 Information about [ptM#](https://zeldamods.org/w_botw/index.php?title=Havok&mobileaction=toggle_view_desktop) header (packedragdoll, Havok magic).
 
-Known extensions of the original files: 
-* .avi - as far as I understand, this is not a video extension, thid is a format for 3D model animations.
-* .tga - it's the format of [COLADA](https://en.wikipedia.org/wiki/COLLADA).
+Known extensions of the original files (extensions that are not likely to have been compressed are marked with *): 
+* `.avi` - video extension?*
+* `.ogv` - video extension (codec: Theora Movies).*
+* `.bik` - video extension.*
+* `.mp3` - audio extension, compressed in FSB4.
+* `.tga` - it's the format of [COLADA](https://en.wikipedia.org/wiki/COLLADA) (texture).
+* `.fnt` - font extension.
+* `.sdk` - set driven keys extension.
+* `.anim` - animation extension.
+* `.vbs` - visual basic script, probably was used when building some files.*
+* `.lua` - script file.
+* `.txt` - text file, was used for logs.*
+* `.png` - image format.
+* `.dae` - dagital asset extension format.
+
+
