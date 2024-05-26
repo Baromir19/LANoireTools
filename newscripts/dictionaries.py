@@ -262,6 +262,134 @@ OBJECT_TYPES_DICTIONARY = { # I think the values is hashed in 4 bytes
     # PROPS
     b'\xAD\x81\xB2\x77': 'Transform',
     # conversation base
+
+    # SPAWN CONTROLLER
+    b'\x05\xD8\xF0\x04': 'SpawnController',
+    b'\x21\xAC\x82\x8E': 'SpawnImmediatly',                 # Spawn directly all the vehicles and actors.
+    b'\xF8\x5C\xDA\xFC': 'DisableAfterSpawning',            # Disable the controller once it has spawned the vehicles and actors.
+    b'\xBF\x07\x76\x9A': 'DespawnCreatedObjectOnDisable',   # Destroy all created objects on disable
+    b'\x87\xE5\x23\x01': 'ForceDespawn',                    # Force despawning all created objects on disable
+    b'\x8F\xE9\xC1\x22': 'CaseVehiclesToSpawn',             # The list of vehicle to spawn.
+    b'\x72\x7F\x7B\xC8': 'CaseActorsToSpawn',               # The list of actors to spawn.
+    b'\xBA\xC7\x29\xDE': 'PlayerPositionWrapper',           # An optional transform for the player
+    b'\x68\xD9\x67\x13': 'PartnerPositionWrapper',          # An optional transform for the partner
+
+    # VEHICLE TO SPAWN
+    b'\xDC\x0D\x89\xCE': 'PositionWrapper',         # An optional updated spawn transform
+    b'\xE3\x59\x2C\x68': 'TeleportIfAlreadySpawn',  # Teleport the vehicle if it was already spawned
+    b'\xDD\xC5\x08\xCD': 'UpateSpawnTransform',     # Update the spawn transform of the case vehicle
+
+    # ONEVENTTRIGGER :: TRIGGER
+    b'\x15\xCD\xF3\x55': 'OnEventTrigger',
+    b'\x8F\x94\xAD\xD4': 'InitiallyEnabled',    # Start enabled or not?
+    b'\x87\x5A\x85\x3E': 'ExecutionCount',      # Number of times the trigger will execute (-1 for infinite)
+    b'\x43\x88\xD6\xBD': 'Condition',           # The condition to evaluate
+    b'\x92\x8C\xCC\x47': 'Action',              # Action which will be executed if the condition is true
+
+    # TOGGLETRIGGER :: TRIGGER
+    b'\x17\x33\x70\xC0': 'ToggleTrigger',
+    b'\x16\xA4\xB2\xBE': 'ExitAction',              # Action which will be executed when the condition is not true anymore
+    b'\xFB\xA6\x1C\x72': 'FireExitActionOnDisable', # Execute the exit condition if the trigger was entered when you disable the trigger
+
+    # VEHICLE INFO SHOWROOM
+    b'\xA6\x96\xF8\x47': 'VehicleShowRoomInfo', 
+    b'\xF7\x2A\x0B\xBE': 'NameElement',                 # String to display vehicle name
+    b'\x42\x49\x8B\xF1': 'SubNameElement',              # String to display vehicle sub-name
+    b'\xE3\x90\x67\xA0': 'YearElement',                 # String to display vehicle year
+    b'\xC5\x68\x8B\xAC': 'PowerElement',                # String to display vehicle power
+    b'\x5D\xDE\x0F\x3F': 'TopSpeedElement',             # String to display vehicle speed
+    b'\xEA\x11\xEA\xF5': 'PriceElement',                # String to display vehicle price
+    b'\xC1\x73\x9B\xB7': 'CategoryElement',             # String to display vehicle category
+    b'\x1E\x6B\x40\x39': 'Curtains',                    # Curtains to change tint with category
+    b'\xD4\xC6\xCB\x56': 'CategoryTwoDoorStringID',     # StringID for category '2 door'
+    b'\xB1\xF4\x9B\x97': 'CategoryFourDoorStringID',    # StringID for category '4 door'
+    b'\x86\xC7\x7F\x06': 'CategorySportsStringID',      # StringID for category 'sports'
+    b'\xBD\x81\x36\x63': 'CategoryServiceStringID',     # StringID for category 'service'
+    b'\x32\xFC\x90\xEF': 'CategoryMotorbikeStringID',   # StringID for category 'motorbike'
+    b'\xA0\x64\xCC\xE0': 'CategoryBonusStringID',       # StringID for category 'bonus'
+    b'\xA7\xA1\x88\x09': 'CategoryPoliceStringID',      # StringID for category 'police'
+    b'\x4F\x9D\x05\x8A': 'ShowTransition',              # Transition to use when showing this screen
+    b'\x4F\x9A\x11\xF9': 'HideTransition',              # Transition to use when leaving this screen
+    b'\x7C\x50\xA4\x97': 'ShowUnlockedTransition',      # Transition when switching to an unlocked vehicle
+    b'\x60\xB4\x36\x74': 'HideUnlockedTransition',      # Transition when switching from an unlocked vehicle
+    b'\x76\xF2\x31\x8D': 'ShowLockedTransition',        # Transition when switching to a locked vehicle
+    b'\xA7\x38\xDD\xB6': 'HideLockedTransition',        # Transition when switching from a locked vehicle
+
+    # AMBIENT ZONE
+    b'\x1A\x31\x78\x05': 'AmbientZone', # editorui/interesting_location.dae
+    b'\x84\xBB\xF9\x50': 'Enabled',             # Is this ambient zone active?
+    b'\x2F\x45\x1A\x8C': 'Width',               # Width of the box.     (metres)
+    b'\x0F\xE5\x4D\xF5': 'Height',              # Height of the box.    (metres)
+    b'\x69\x1C\xA3\xFA': 'Depth',               # Depth of the box.     (metres)
+    b'\x27\xDC\xA6\x62': 'Priority',            # Priority used to control zones when more than one overlaps.  100 = high, 50 = normal, 0 = low"
+    b'\x27\x13\x8B\xED': 'VolumeLevel',         # Volume level
+    b'\x1A\x03\xB6\xFE': 'MinFadeTime',         # Minimum fade time
+    b'\x19\xB5\x3F\xC5': 'AmbientStream',       # Stream to play        (audio/ambience, mp3)
+    b'\x14\xF5\x29\xFB': 'NightAmbientStream',  # Night stream to play  (audio/ambience, mp3)
+    b'\xA1\xC8\x0F\x57': 'RainAmbientStream',   # Rain stream to play   (audio/ambience, mp3)
+    b'\x90\x2B\x0C\x6E': 'ReverbName',          # Reverb name
+    b'\xF3\x6C\x4D\x98': 'ReverbMinLevel',      # Room parameter value at the distance = FadeOffDistance. Fading in would be calculated between this value and Room parameter in corresponding Reverb
+    
+    # b'\x90\x50\x87\xF2': '', PlanarReflectionLocator / ReflectiveMaterialLocator 
+    
+    # HOSTAGE MINIGAME PREPZONE
+    b'\xAD\xD1\xB8\xC6': 'HostageMinigamePrepZone',
+    b'\xD8\x23\x34\x41': 'HostageTaker',        # The actor that will be the hostage taker in the hostage minigame situation
+    b'\xDE\xCD\x9A\xB9': 'Volume',              # Start preparing for the hostage minigame when the player is in this zone.
+
+    # ACTOR EVENTS
+    b'\x42\x50\x3B\xFD': 'ActorEvents',
+    b'\xAB\x33\xA6\xA8': 'OnShotToDeathEvent',                  # The triggers to evaluate when the actor is shot till death
+    b'\x01\x6E\x29\xBD': 'OnDeadEvent',                         # The triggers to evaluate when the actor is dead
+    b'\xAE\x2D\x64\xBD': 'OnShotEvent',                         # The triggers to evaluate when the actor is shot
+    b'\x3E\x06\x1A\x59': 'OnFireEvent',                         # The triggers to evaluate when the actor is shooting
+    b'\x23\x70\xB9\x62': 'OnFireAndHitEvent',                   # The triggers to evaluate when the actor has hit someone with his gun
+    b'\x13\xC7\xF2\x60': 'OnStruckEvent',                       # The triggers to evaluate when the actor is strucked
+    b'\x60\xCC\x03\x42': 'OnStrikeEvent',                       # The triggers to evaluate when the actor is striking
+    b'\x8E\xFC\x86\x96': 'OnTackleEvent',                       # The triggers to evaluate when the actor is tackling
+    b'\xCF\xA1\x34\x9D': 'OnTackledEvent',                      # The triggers to evaluate when the actor is tackled
+    b'\x0F\x70\x3F\x95': 'OnPulledFromClimbableEvent',          # The triggers to evaluate when the actor is pulled from a climbable
+    b'\x45\x65\xB4\x8D': 'OnKickingOnClimbableEvent',           # The triggers to evaluate when the actor kicks an actor below them on a climbable
+    b'\x17\xC9\x20\x33': 'OnCarJackEvent',                      # The triggers to evaluate when the actor is car jacked
+    b'\x5F\x58\x91\x3E': 'OnSurrenderEvent',                    # The triggers to evaluate when the actor is surrending
+    b'\x1A\xAA\x83\xB3': 'OnFleeEvent',                         # The triggers to evaluate when the actor is fleeing
+    b'\xA6\xA3\x43\x36': 'OnPanicEvent',                        # The triggers to evaluate when the actor is panicking
+    b'\x4F\x34\x93\xFF': 'OnApprehendedEvent',                  # The triggers to evaluate when the actor is apprehended
+    b'\x2B\x44\x00\xD0': 'OnPreApprehendedEvent',               # The triggers to evaluate when the actor is going to be apprehended
+    b'\x21\xCE\xB0\x7A': 'OnGotAwayDuringChase',                # The triggers to evaluate when this actor gets away during a chase
+    b'\xC8\x96\xC3\x30': 'OnFleeMinigameComplete',              # The triggers to evaluate when this actor is successfully targeted using the minigame and sequence has finished
+    b'\xC1\x49\x85\x0D': 'OnFleeMinigameChaseComplete',         # The triggers to evaluate when this actor is successfully targetd using the minigame before the sequence plays. If no sequence is to play, fires at same time as OnFleeMinigameComplete
+    b'\x5F\xE7\xCB\x38': 'OnStartBrawlingEvent',                # The triggers to evaluate when the actor is entering brawling
+    b'\xE7\x13\x09\x87': 'OnEnterBrawlLockEvent',               # The triggers to evaluate when the actor is entering brawling lock on.
+    b'\x4A\xCB\xA8\xC1': 'OnStartFinisherEvent',                # The triggers to evaluate when the actor is starts a finishing move.
+    b'\x7F\x9A\x5C\x58': 'OnEndBrawlingEvent',                  # The triggers to evaluate when the actor exits brawling.
+    b'\x32\xD4\x5F\xE5': 'OnSwayingEvent',                      # The triggers to evaluate when the actor is swaying.
+    b'\x94\xDB\x7E\x3A': 'OnGrapplingEvent',                    # The triggers to evaluate when the actor is grappled.
+    b'\x27\xC3\xB2\x0F': 'OnWeaponGrappledEvent',               # The triggers to evaluate when the actor is grappled.
+    b'\xF2\x33\x7F\xAF': 'OnKnockedDownEvent',                  # The triggers to evaluate when the actor is knocked down
+    b'\x7B\x97\x98\x57': 'OnKnockedOutEvent',                   # The triggers to evaluate when the actor is knocked out
+    b'\x9B\xB3\x5D\xDD': 'OnKnockedOutFinisher',                # The triggers to evaluate when the actor is knocked out due to a finisher
+    b'\xD1\x62\x36\x32': 'OnKnockedOutNonFinisher',             # The triggers to evaluate when the actor is knocked out from a non finisher
+    b'\x5B\xEF\xA4\x1E': 'OnBlockedEvent',                      # The triggers to evaluate when the actor is knocked out
+    b'\x9A\xB6\x13\x37': 'OnEnterIncognitoEvent',               # The triggers to evaluate when the actor enters incognito mode. NOTE: this will only affect the player as he is the only one who can enter incognito
+    b'\xF4\xB3\x79\x74': 'OnExitIncognitoEvent',                # The triggers to evaluate when the actor exits incognito events. NOTE: this will only affect the player as he is the only one who can enter incognito
+    b'\x07\xE3\x1B\x35': 'OnStartAmbushEvent',                  # The triggers to evaluate when the actor starts an ambush.
+    b'\x76\xD6\xAF\xC4': 'OnEndAmbushEvent',                    # The triggers to evaluate when the actor ends an ambush.
+    b'\x39\xA0\xFE\xA6': 'OnStartWalkingAmbushEvent',           # The triggers to evaluate when the actor starts a walking ambush.
+    b'\xAE\x32\xCB\x63': 'OnEndWalkingAmbushEvent',             # The triggers to evaluate when the actor ends a walking ambush.
+    b'\x0D\x27\x15\x62': 'OnBargedEvent',                       # The triggers to evaluate when the actor is barged.
+    b'\xB8\x63\x6E\x32': 'OnGetOutOfTheWayEvent',               # The triggers to evaluate when the actor gets out of the way of someone.
+    b'\x16\x55\x5C\x6B': 'OnHostageShotByHostageTakerEvent',    # The triggers to evaluate when the hostage-taker shoots a hostage in a hostage situation.
+    b'\xB3\xCA\x2B\x3E': 'OnHostageShotByPlayerEvent',          # The triggers to evaluate when the player shoots a hostage in a hostage situation.
+    b'\xBA\x41\x81\xDD': 'OnHostageKilledByPlayerEvent',        # The triggers to evaluate when the player kills a hostage in a hostage situation.
+    b'\x02\xAD\xC1\xE6': 'OnHostageTakerShotByPlayerEvent',     # The triggers to evaluate when the player shoots a hostage-taker in a hostage situation.
+    b'\x81\x01\x5A\x85': 'OnHostageTakerWoundedByPlayerEvent',  # The triggers to evaluate when the player wounds a hostage-taker in a hostage situation.
+    b'\x5A\x8C\xD6\xE7': 'OnHostageTakenByHostageTakerEvent',   # The triggers to evaluate if this actor takes a hostage (this could be before the sequence as we wait for the player).
+    b'\x74\x82\x0A\xF6': 'OnHostageMinigameStartedEvent',       # The triggers to evaluate when the hostage minigame begins (when the sequence is about to play).
+    b'\x20\x73\xBD\x98': 'OnStruckByVehicleEvent',              # The triggers to evaluate when the actor has hit someone with his gun
+
+    # CINEMATIC TODO:
+    b'\x14\xB8\xB7\x1E': 'Cinematic',
 }
 
 FILE_EXTENSIONS_DICTIONARY = { 
