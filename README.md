@@ -7,7 +7,7 @@ The tools for "oldscripts" were created by other people, I only found them in th
 * `BMS .big unpacker` was created by Falo (not sure)
 * `010 Tools` for Nintendo Switch ver. can be found [here](https://github.com/masagrator/LANoireNX)
 * `.fsb4 unpacker` can be found [here](https://hcs64.com/vgm_ripping.html) (fsb_mpeg). For packaging, you need to make a WAV format from MP3, and then convert it using [fsbankex.exe](https://www.playground.ru/mafia_2/file/mafia_2_konvertatsiya_muzyki_k_igre-888201?ysclid=lwhv6vorvu171450274)
-* `Havok data` export can be found [here](https://lukascone.wordpress.com/2024/03/12/havok-middleware/). More about ptM# header (Havok magic) is [here](https://zeldamods.org/w_botw/index.php?title=Havok&mobileaction=toggle_view_desktop)
+* `Havok data` export can be found [here](https://lukascone.wordpress.com/2024/03/12/havok-middleware/). More about havok header (sometimes included in ptM#) is [here](https://zeldamods.org/w_botw/index.php?title=Havok&mobileaction=toggle_view_desktop)
 * `BMFont` is the format that was used to create the in-game fonts, the program to generate [here](https://www.angelcode.com/products/bmfont/)
 
 New scripts were created by me (unpacker of big files based on Python2 big unpacker):
@@ -46,6 +46,6 @@ Known extensions of the original files (extensions that are not likely to have b
 * `.lua` - script file.
 * `.txt` - text file, was used for logs.*
 * `.png` - image format. In the game, it is packaged as dds, it is enough to use online converters.
-* `.dae` - dagital asset extension format.
+* `.dae` - dagital asset extension format. As far as I understand, it is serialized in DGAD (magic for .bin), there is also a line with a "theora" in the DGAD.
 
 
