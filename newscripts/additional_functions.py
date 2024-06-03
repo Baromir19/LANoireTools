@@ -1,8 +1,21 @@
+from dictionaries import CRC32_KEY
 import zlib
 
 # Get hash value from string (file path. The hash value can be obtained from the name of the entry files (obtained from BigPC Unpacker))
 def file_path_hash(file_path_value): 
     print('{} => 0x{:08x}'.format(file_path_value, zlib.crc32(file_path_value.encode()) & 0xffffffff))
+
+def get_crc_from_string(stringValue: str) -> int:
+    stringValue = stringValue.lower()
+
+    result = 0xFFFFFFFF
+
+    for i in range(len(stringValue)):
+        symbol = ord(stringValue[i])
+
+        result = CRC32_KEY[(result & 0xFF) ^ symbol] ^ (result >> 8)
+
+    return ~(result & 0xFFFFFFFF) & 0xFFFFFFFF
 
 # Loop that I use to quickly write dictionaries that are based on a name with XML
 def convert_to_dictionary():
