@@ -3,15 +3,17 @@ import zlib
 
 # Get hash value from string (file path. The hash value can be obtained from the name of the entry files (obtained from BigPC Unpacker))
 def file_path_hash(file_path_value): 
+    file_path_value = file_path_value.lower()
     print('{} => 0x{:08x}'.format(file_path_value, zlib.crc32(file_path_value.encode()) & 0xffffffff))
 
-def get_crc_from_string(stringValue: str) -> int:
-    stringValue = stringValue.lower()
+# Same to previous
+def get_crc_from_string(string_value: str) -> int:
+    string_value = string_value.lower()
 
     result = 0xFFFFFFFF
 
-    for i in range(len(stringValue)):
-        symbol = ord(stringValue[i])
+    for i in range(len(string_value)):
+        symbol = ord(string_value[i])
 
         result = CRC32_KEY[(result & 0xFF) ^ symbol] ^ (result >> 8)
 
