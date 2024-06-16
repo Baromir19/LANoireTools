@@ -36,9 +36,10 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 Known extensions of the original files (extensions that are not likely to have been compressed are marked with *): 
 * `.avi` - video extension?*
 * `.ogv` - video extension (codec: Theora Movies). As far as I understand, it is packed in DGAD.
-* `.bik` - video extension.*
-* `.mp3` - audio extension, compressed in FSB4.
-* `.tga` - it's the texture format. Probably either reformatted to .dds without transparency support, or packed in 1 of the archives (ptM#/DGAD).
+* `.bik` - video extension.
+* `.mp3` - audio extension, compressed in FSB4, and also has a format without a header.
+* `.tga` - it's the texture format. Probably either reformatted to .dds without transparency support, or packed in the DGAD archive.
+* `.ico` - icons image were probably used in the development.
 * `.fnt` - font extension. The game uses this extension, not .dds.
 * `.sdk` - set driven keys extension.
 * `.anim` - animation extension.
