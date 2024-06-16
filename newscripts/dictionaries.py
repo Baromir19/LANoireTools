@@ -396,7 +396,9 @@ FILE_EXTENSIONS_DICTIONARY = {
     b'\x41\x54\x42\x04': 'atb',                 # attribute
     b'\x46\x45\x56\x31': 'fev',                 # unknown format, for music, version 1
     b'\x46\x53\x42\x34': 'fsb',                 # compressed music, fsbank (4)
+    b'\xFF\xFB\x94\x04': 'mp3',                 # MPEG file without ID3 header
     b'\x4F\x67\x67\x53': 'ogv',                 # Theora video format
+    b'\x42\x49\x4B\x69': 'bik',                 # Bink video format
     b'\x44\x47\x41\x44': 'bin',                 # unknown (dgad) format
     b'\x42\x4D\x46\x03': 'fnt',                 # bmf font format
     b'\x44\x44\x53\x20': 'dds',                 # dds image format
