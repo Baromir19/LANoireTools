@@ -35,17 +35,17 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 
 Known extensions of the original files (extensions that are not likely to have been compressed are marked with *): 
 * `.avi` - video extension?*
-* `.ogv` - video extension (codec: Theora Movies).*
+* `.ogv` - video extension (codec: Theora Movies). As far as I understand, it is packed in DGAD.
 * `.bik` - video extension.*
 * `.mp3` - audio extension, compressed in FSB4.
-* `.tga` - it's the texture format.
-* `.fnt` - font extension.
+* `.tga` - it's the texture format. Probably either reformatted to .dds without transparency support, or packed in 1 of the archives (ptM#/DGAD).
+* `.fnt` - font extension. The game uses this extension, not .dds.
 * `.sdk` - set driven keys extension.
 * `.anim` - animation extension.
 * `.vbs` - visual basic script, probably was used when building some files.*
 * `.lua` - script file.
 * `.txt` - text file, was used for logs.*
 * `.png` - image format. In the game, it is packaged as dds, it is enough to use online converters.
-* `.dae` - dagital asset extension format. As far as I understand, it is serialized in DGAD (magic for .bin), there is also a line with a "theora" in the DGAD.
+* `.dae` - dagital asset extension format. As far as I understand, it is serialized in ptM#
 
-
+You can get a hash (crc) from a string (object type/variable name) for an atb file using the get_crc_from_string function in `additional_functions.py` (a random search for variable names will not lead to anything good due to collisions).
