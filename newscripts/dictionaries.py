@@ -13449,7 +13449,11 @@ OBJECT_TYPES_DICTIONARY = {
     b'\xA5\xA0\xF5\x8B': 'DABlendWeightsId',
     b'\x6E\x69\x03\x7E': 'CloudsTexture',
     b'\xAF\x86\xF2\xB9': 'RainTexturePath',
-    b'\x71\x49\x4B\xD0': 'CollisionRenderModeString'
+    b'\x71\x49\x4B\xD0': 'CollisionRenderModeString',
+
+    b'\x4D\xE9\x1E\xE1': 'Items',
+    b'\x7A\x95\xCB\x7C': 'PossibleTypes',
+    b'\xF2\x65\x5D\xD2': 'Sources'
 }
 
 FILE_EXTENSIONS_DICTIONARY = { 

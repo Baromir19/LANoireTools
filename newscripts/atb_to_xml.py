@@ -208,6 +208,11 @@ def read_object_variable(file, data_address, father_element, is_array_element = 
         if var_size == 0x46 or (var_size == 30 and int.from_bytes(result_value, byteorder='little')):
             object_value = '0x' + ''.join([f'{b:02x}' for b in result_value]) 
 
+            if result_value in OBJECT_TYPES_DICTIONARY:
+                object_value = OBJECT_TYPES_DICTIONARY[result_value]
+            else:
+                object_value = '0x' + ''.join(format(byte, '02X') for byte in result_value)
+
             object_subelement = ElementTree.SubElement(father_element, variable_type, {'name': variable_name})
             object_subelement.text = object_value
 
