@@ -33,6 +33,8 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 
 .atb files has next format: `intermediate/chunks/attribute/root."BIGNAME"."ATBNAME".atb.chunk`, where "BIGNAME" is name of .big file (no file format, f.e. "dlc.dlc4"), "ATBNAME" - name of .atb file (with my .atb to .xml tool you can see that among the upper classes or collections there is a file name in a format of 2 letters and 3 numbers, f.e. "at004". Is optional in the name).
 
+The ptM# file is probably an archive that includes .dae, .sdk, ragdoll, animations, texture pointers (for example, 0x5669FF3C is the CRC for `textures/uistreamed_dlc/outfits/dlc05.tga`, it is specified in the DLC file for the texture of the selected outfit. In the game, however, this CRC is converted into a pointer to an abstract texture / shader).
+
 Known extensions of the original files (extensions that are not likely to have been compressed are marked with *): 
 * `.avi` - video extension?*
 * `.ogv` - video extension (codec: Theora Movies). As far as I understand, it is packed in DGAD.
