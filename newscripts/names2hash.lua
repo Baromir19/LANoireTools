@@ -1,0 +1,7 @@
+debug_setBreakpoint("LaNoire.exe+92C0C0", function()
+    local stringToPrint = readString(readInteger(ESP+4), EDI, false)
+    local file = io.open("out.txt", "a")
+    file:write(stringToPrint .. "\n")
+    file:close()
+    debug_continueFromBreakpoint(co_run)
+end)
