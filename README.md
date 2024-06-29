@@ -35,6 +35,8 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 
 The ptM# file is probably an archive that includes .dae, .sdk, ragdoll, animations, texture pointers (for example, 0x5669FF3C is the CRC for `textures/uistreamed_dlc/outfits/dlc05.tga`, it is specified in the DLC file for the texture of the selected outfit. In the game, however, this CRC is converted into a pointer to an abstract texture / shader).
 
+The 4mnA is probably also an archive. Bytes 0x14-0x18 is the size of the header, and byte 0x18-0x0C is the size of the archived file. Perhaps bytes 4-8 indicates the number of files/blocks.
+
 Known extensions of the original files (extensions that are not likely to have been compressed are marked with *): 
 * `.avi` - video extension?*
 * `.ogv` - video extension (codec: Theora Movies). As far as I understand, it is packed in DGAD.
