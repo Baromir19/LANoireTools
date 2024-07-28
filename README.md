@@ -33,7 +33,11 @@ Theoretically, you don't need to pack the files, you just need to know their ful
 
 .atb files has next format: `intermediate/chunks/attribute/root."BIGNAME"."ATBNAME".atb.chunk`, where "BIGNAME" is name of .big file (no file format, f.e. "dlc.dlc4"), "ATBNAME" - name of .atb file (with my .atb to .xml tool you can see that among the upper classes or collections there is a file name in a format of 2 letters and 3 numbers, f.e. "at004". Is optional in the name).
 
-The ptM# file is probably an archive that includes .dae, .sdk, ragdoll, animations, texture pointers (for example, 0x5669FF3C is the CRC for `textures/uistreamed_dlc/outfits/dlc05.tga`, it is specified in the DLC file for the texture of the selected outfit. In the game, however, this CRC is converted into a pointer to an abstract texture / shader).
+The ptM# file is probably an archive that includes .dae, .sdk, ragdoll, animations, texture pointers (for example, 0x5669FF3C is the CRC for `textures/uistreamed_dlc/outfits/dlc05.tga`, it is specified in the DLC file for the texture of the selected outfit. In the game, however, this CRC is converted into a pointer to an abstract texture / shader). Bytes 0x0-0x8 are the file signature and possibly its version. 0x8-0xC - header size. 0xC-0xE - is the number of values ​​in the header.
+
+The 4mnA is probably also an archive. Bytes 0x14-0x18 is the size of the header, and byte 0x18-0x0C is the size of the archived file. Perhaps bytes 4-8 indicates the number of files/blocks.
+
+The ROAD's 0x8-0xC bytes probably is UNIX-time (0x4F293FB6 = 1 February 2012). The strange thing is that this value (perhaps) is constant for all ROAD files.
 
 Known extensions of the original files (extensions that are not likely to have been compressed are marked with *): 
 * `.avi` - video extension?*
