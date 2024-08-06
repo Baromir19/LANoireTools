@@ -1,10 +1,8 @@
 import struct
 import os, sys
 
-class FileUnpacker:
+class UberPointerManager:
     def __init__(self, file_path):
-        self.TO_FLOAT = True # set for print values as float or as hexademical
-
         self.file_path = file_path
         self.data = self._read_file()
         self.file_size = self._get_file_size()
@@ -75,6 +73,35 @@ class FileUnpacker:
 
         return current_pointer_address
 
+    def get_pointer_by_block(self, block_num: int):
+        pointers_to_ret = []
+        pointers_addresses_to_ret = []
+
+        for i in range(len(self.pointers_blocks)):
+            if self.pointers_blocks[i] == block_num:
+                pointers_to_ret.append(self.pointers[i])
+                pointers_addresses_to_ret.append(self.pointers_addresses[i])
+
+        return pointers_to_ret, pointers_addresses_to_ret
+
+    def get_vertex_positions_multiplier(self, pointers, pointers_addresses):
+        results = []
+        
+        with open(self.file_path, 'rb') as file:
+            for i in range(0, len(pointers), 2):  # 1st ptr is to beginning of the vertex block (buffer), 2nd -> indeces block
+                pointer = pointers[i]
+                address = pointers_addresses[i] - 0x14  # - 0x14 bytes for 3 float multipliers
+                
+                file.seek(address)
+                data = file.read(12)
+                if len(data) < 12:
+                    continue
+                
+                values = struct.unpack('fff', data)
+                results.append(values)
+        
+        return results
+
     def print_pointers(self):
         print(f"Main block: 0x{self.main_block_pointer:X}")
         print(f"Pointer count: {len(self.pointers)}")
@@ -84,7 +111,7 @@ class FileUnpacker:
             else:
                 print(f"Pointer {i}: (DDS 0x{self.pointers_blocks[i]:X}) + 0x{pointer:X} (address: 0x{self.pointers_addresses[i]:X})")
 
-    def print_pointers_values(self):
+    def print_pointers_values(self, to_float = False):
         combined = list(zip(self.pointers, self.pointers_addresses, self.pointers_blocks))
         sorted_combined = sorted(combined, key=lambda x: x[0])
         print('_______________________________\n')
@@ -100,7 +127,7 @@ class FileUnpacker:
 
                 bytes_between = self.data[pointer:next_address]
                 values = struct.unpack('<' + 'I' * (len(bytes_between) // 4), bytes_between)
-                print(f"Pointer 0x{pointer:04X}:", ' '.join(f"{value:08X}" if not self.TO_FLOAT else f"{struct.unpack('<f', struct.pack('<I', value))[0]}" for value in values))
+                print(f"Pointer 0x{pointer:04X}:", ' '.join(f"{value:08X}" if not to_float else f"{struct.unpack('<f', struct.pack('<I', value))[0]}" for value in values))
 
                 self.readed_addresses.update(range(pointer, next_address, 4)) 
 
@@ -112,12 +139,12 @@ class FileUnpacker:
             if i not in self.readed_addresses:
                 value = struct.unpack('<I', self.data[i:i+4])[0]
                 if unread_bytes and i - unread_bytes[-1][0] > 4:
-                    print(' '.join(f"{value:08X}" if not self.TO_FLOAT else f"{struct.unpack('<f', struct.pack('<I', value))[0]}" for addr, value in unread_bytes))
+                    print(' '.join(f"{value:08X}" if not to_float else f"{struct.unpack('<f', struct.pack('<I', value))[0]}" for addr, value in unread_bytes))
                     unread_bytes = []
                 unread_bytes.append((i, value))
 
         if unread_bytes:
-            print(' '.join(f"{value:08X}" if not self.TO_FLOAT else f"{struct.unpack('<f', struct.pack('<I', value))[0]}" for addr, value in unread_bytes))
+            print(' '.join(f"{value:08X}" if not to_float else f"{struct.unpack('<f', struct.pack('<I', value))[0]}" for addr, value in unread_bytes))
 
 def main():
     try:
@@ -134,9 +161,17 @@ def main():
         return
 
     try:
-        unpacker = FileUnpacker(file_path)
+        if sys.argv[1:][1].lower() == 'false':
+            to_float = False
+        else:
+            to_float = True
+    except:
+        to_float = True
+
+    try:
+        unpacker = UberPointerManager(file_path)
         unpacker.print_pointers()
-        unpacker.print_pointers_values() # maybe useless in future
+        unpacker.print_pointers_values(to_float) # maybe useless in future
     except Exception as e:
         print(f"Error: {e}")
 
