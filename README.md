@@ -62,3 +62,5 @@ Known extensions of the original files (extensions that are not likely to have b
 You can get a hash (crc) from a string (object type/variable name) for an atb file using the get_crc_from_string function in `additional_functions.py` (a random search for variable names will not lead to anything good due to collisions).
 
 ## Images
+![alt text](https://github.com/Baromir19/LANoireTools/blob/main/images/ModelRailwayCarriage.png)
+![alt text](https://github.com/Baromir19/LANoireTools/blob/main/images/ModelColt38.png)
